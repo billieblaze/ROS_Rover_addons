@@ -1,0 +1,8 @@
+prefix=/home/pi/catkin_ws/devel
+
+Name: rover
+Description: Description of rover
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pi/catkin_ws/devel/lib 
+Requires: 
