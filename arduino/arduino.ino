@@ -1,5 +1,5 @@
 
-/* 
+/*
  * Button Example for Rosserial
  */
 
@@ -43,47 +43,42 @@ NewPing sonar[SONAR_NUM] = {     // Sensor object array.
 
 sensor_msgs::Range range_msg;
 ros::Publisher pub_range( "range_data", &range_msg);
-
-
-int last_distance=0;
-long last_distance_time=0;
-long distance_delay=10;
 bool published_distance = true;
 
 
 // Stepper Config
-#include <Stepper.h>
-const int stepsPerRevolution = 200;
-Stepper myStepper(stepsPerRevolution, 14, 15, 16, 17);
 volatile int stepCount = 0;
 int maxSteps = 200 * 10;
-int endstopPin = 53;
+int endstopPin = A3;
+int dirPin = A4;
+int stepPin = A5;
+
 int initializingEndstop = 0;
 
 // sensor
 void setupSensor(){
   nh.advertise(pub_sensor);
-  
-  //initialize an LED output pin 
+
+  //initialize an LED output pin
   //and a input pin for our push button
   pinMode(led_pin, OUTPUT);
   pinMode(button_pin, INPUT);
-  
+
   //Enable the pullup resistor on the button
   digitalWrite(button_pin, HIGH);
-  
+
   //The button is a normally button
   last_reading = ! digitalRead(button_pin);
 }
 
 void handleSensor(){
   bool reading = ! digitalRead(button_pin);
-  
+
   if (last_reading!= reading){
       last_debounce_time = millis();
       published_sensor = false;
   }
-  
+
   //if the button value has not changed during the debounce delay
   // we know it is stable
   if ( !published_sensor && (millis() - last_debounce_time)  > debounce_delay) {
@@ -118,12 +113,11 @@ void echoCheck() { // If ping received, set the sensor distance to array.
 }
 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
-    
-  for (uint8_t i = 0; i < SONAR_NUM; i++) {  
+
+  for (uint8_t i = 0; i < SONAR_NUM; i++) {
     range_msg.range = cm[i];
     range_msg.header.stamp = nh.now();
     pub_range.publish(&range_msg);
-    published_distance = true;
   }
 
 }
@@ -147,9 +141,9 @@ void handleDistance(){
       //todo: add the median filter code back to the array of sensors
        // int reading = sonar.ping_cm();
     // samples.add(reading);
-    
+
     // if ( !published_distance && (millis() - last_distance_time)  > distance_delay) {
-      
+
     //   pushed_msg_distance.data = (int)samples.getMedian();
 
     //   pub_distance.publish(&pushed_msg_distance);
@@ -172,7 +166,13 @@ void moveStepper(int steps) {
   }
 
   if ( targetSteps < maxSteps || initializingEndstop == 1) {
-    myStepper.step(steps);
+    //myStepper.step(steps);
+    for (int i = 0; i < steps; i++){
+      digitalWrite(stepPin, LOW);
+      delay(10);
+      digitalWrite(stepPin, HIGH;
+      delay(10);
+    }
     stepCount += steps;
     //Serial.println(stepCount);
   }
@@ -201,21 +201,17 @@ void setupStepper() {
 void setup(){
 
   nh.initNode();
-  
-  myStepper.setSpeed(100);
 
-  setupSensor(); 
+  setupSensor();
   setupDistance();
 
   setupStepper();
 }
 
 void loop(){
-  
+
   handleSensor();
   handleDistance();
-  
+
   nh.spinOnce();
 }
-
-

@@ -4,7 +4,7 @@ void setup(){
 }
 
 void loop(){
-  while (digitalRead(A3)){
+  while (!digitalRead(A3)){
     digitalWrite(13,HIGH);
   }
 }
