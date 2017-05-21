@@ -9,25 +9,27 @@ build-mega2560/arduino.o: arduino.ino \
  /usr/share/arduino/hardware/arduino/cores/arduino/Printable.h \
  /usr/share/arduino/hardware/arduino/cores/arduino/new.h \
  /usr/share/arduino/hardware/arduino/variants/mega/pins_arduino.h \
- /home/pi/arduino/libraries/ros_lib/ros.h \
- /home/pi/arduino/libraries/ros_lib/ros/node_handle.h \
- /home/pi/arduino/libraries/ros_lib/std_msgs/Time.h \
- /home/pi/arduino/libraries/ros_lib/ros/msg.h \
- /home/pi/arduino/libraries/ros_lib/ros/time.h \
- /home/pi/arduino/libraries/ros_lib/ros/duration.h \
- /home/pi/arduino/libraries/ros_lib/rosserial_msgs/TopicInfo.h \
- /home/pi/arduino/libraries/ros_lib/rosserial_msgs/Log.h \
- /home/pi/arduino/libraries/ros_lib/rosserial_msgs/RequestParam.h \
- /home/pi/arduino/libraries/ros_lib/ros/msg.h \
- /home/pi/arduino/libraries/ros_lib/ros/publisher.h \
- /home/pi/arduino/libraries/ros_lib/ros/node_handle.h \
- /home/pi/arduino/libraries/ros_lib/ros/subscriber.h \
- /home/pi/arduino/libraries/ros_lib/ros/service_server.h \
- /home/pi/arduino/libraries/ros_lib/ros/service_client.h \
- /home/pi/arduino/libraries/ros_lib/ArduinoHardware.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/node_handle.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/std_msgs/Time.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/msg.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/time.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/duration.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/rosserial_msgs/TopicInfo.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/rosserial_msgs/Log.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/rosserial_msgs/RequestParam.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/msg.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/publisher.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/node_handle.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/subscriber.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/service_server.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ros/service_client.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/ArduinoHardware.h \
  /usr/share/arduino/hardware/arduino/cores/arduino/HardwareSerial.h \
- /home/pi/arduino/libraries/ros_lib/std_msgs/Bool.h \
- /home/pi/arduino/libraries/ros_lib/std_msgs/Int16.h \
- /home/pi/arduino/libraries/RunningMedian/RunningMedian.h \
- /home/pi/arduino/libraries/NewPing/NewPing.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/std_msgs/Bool.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/std_msgs/Int16.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/sensor_msgs/Range.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/std_msgs/Header.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/NewPing/NewPing.h \
+ /home/pi/ROS_Rover_addons/arduino/libraries/RunningMedian/RunningMedian.h \
  /usr/share/arduino/libraries/Stepper/Stepper.h
