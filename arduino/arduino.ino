@@ -45,10 +45,6 @@ NewPing sonar[SONAR_NUM] = {     // Sensor object array.
 
 sensor_msgs::Range range_msg;
 ros::Publisher pub_range( "range_data", &range_msg);
-
-int last_distance=0;
-long last_distance_time=0;
-long distance_delay=10;
 bool published_distance = true;
 
 // Stepper Config
@@ -116,8 +112,8 @@ void echoCheck() { // If ping received, set the sensor distance to array.
 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
   int range = 0;
-  for (uint8_t i = 0; i < SONAR_NUM; i++) {
 
+  for (uint8_t i = 0; i < SONAR_NUM; i++) {
     range_msg.header.stamp = nh.now();
 
     char frameid[4]="/  ";
@@ -143,7 +139,6 @@ void oneSensorCycle() { // Sensor ping cycle complete, do something with the res
     range_msg.header.frame_id =  frameid;
 
     pub_range.publish(&range_msg);
-    published_distance = true;
   }
 
 }
