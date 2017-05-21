@@ -6,7 +6,7 @@
 #include <ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int16.h>
-
+#include <sensor_msgs/Range.h>
 ros::NodeHandle nh;
 
 // Sensor Config
@@ -23,21 +23,33 @@ bool published_sensor = true;
 
 
 // // Distance Config
+#include <NewPing.h>
 #include "RunningMedian.h"
 RunningMedian samples = RunningMedian(10);
 
-#include <NewPing.h>
-#define TRIGGER_PIN  2  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     3  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define MAX_DISTANCE 400 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+#define SONAR_NUM     3 // Number of sensors.
+#define MAX_DISTANCE 200 // Maximum distance (in cm) to ping.
+#define PING_INTERVAL 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
-std_msgs::Int16 pushed_msg_distance;
+unsigned long pingTimer[SONAR_NUM]; // Holds the times when the next ping should happen for each sensor.
+unsigned int cm[SONAR_NUM];         // Where the ping distances are stored.
+uint8_t currentSensor = 0;          // Keeps track of which sensor is active.
+
+NewPing sonar[SONAR_NUM] = {     // Sensor object array.
+  NewPing(2, 3, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
+  NewPing(4, 5, MAX_DISTANCE),
+  NewPing(6, 7, MAX_DISTANCE)
+};
+
+sensor_msgs::Range range_msg;
+ros::Publisher pub_range( "range_data", &range_msg);
+
+
 int last_distance=0;
 long last_distance_time=0;
 long distance_delay=10;
 bool published_distance = true;
-ros::Publisher pub_distance("/sensor/distance", &pushed_msg_distance);
+
 
 // Stepper Config
 #include <Stepper.h>
@@ -86,27 +98,66 @@ void handleSensor(){
 
 // distance
 void setupDistance(){
+  range_msg.radiation_type = sensor_msgs::Range::INFRARED;
+  range_msg.header.frame_id =  frameid;
+  range_msg.field_of_view = 0.01;
+  range_msg.min_range = 0.03;
+  range_msg.max_range = 0.4;
+
   nh.advertise(pub_distance);
+  pingTimer[0] = millis() + 75;           // First ping starts at 75ms, gives time for the Arduino to chill before starting.
+  for (uint8_t i = 1; i < SONAR_NUM; i++) // Set the starting time for each sensor.
+    pingTimer[i] = pingTimer[i - 1] + PING_INTERVAL;
+
 }
 
-void handleDistance(){
-  int reading = sonar.ping_cm();
-  samples.add(reading);
-  if (last_distance != reading){
-      last_distance_time = millis();
-      published_distance = false;
-  }
-  
-  if ( !published_distance && (millis() - last_distance_time)  > distance_delay) {
-    
-    pushed_msg_distance.data = (int)samples.getMedian();
 
-    pub_distance.publish(&pushed_msg_distance);
+void echoCheck() { // If ping received, set the sensor distance to array.
+  if (sonar[currentSensor].check_timer())
+    cm[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_CM;
+}
+
+void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
+    
+  for (uint8_t i = 0; i < SONAR_NUM; i++) {  
+    range_msg.range = cm[i];
+    range_msg.header.stamp = nh.now();
+    pub_range.publish(&range_msg);
     published_distance = true;
   }
 
-  last_distance = reading;
+}
 
+void handleDistance(){
+  //  if (last_distance != reading){
+  //     last_distance_time = millis();
+  //     published_distance = false;
+  // }
+
+    for (uint8_t i = 0; i < SONAR_NUM; i++) { // Loop through all the sensors.
+      if (millis() >= pingTimer[i]) {         // Is it this sensor's time to ping?
+        pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
+        if (i == 0 && currentSensor == SONAR_NUM - 1) oneSensorCycle(); // Sensor ping cycle complete, do something with the results.
+        sonar[currentSensor].timer_stop();          // Make sure previous timer is canceled before starting a new ping (insurance).
+        currentSensor = i;                          // Sensor being accessed.
+        cm[currentSensor] = 0;                      // Make distance zero in case there's no ping echo for this sensor.
+        sonar[currentSensor].ping_timer(echoCheck); // Do the ping (processing continues, interrupt will call echoCheck to look for echo).
+      }
+
+      //todo: add the median filter code back to the array of sensors
+       // int reading = sonar.ping_cm();
+    // samples.add(reading);
+    
+    // if ( !published_distance && (millis() - last_distance_time)  > distance_delay) {
+      
+    //   pushed_msg_distance.data = (int)samples.getMedian();
+
+    //   pub_distance.publish(&pushed_msg_distance);
+    //   published_distance = true;
+    // }
+
+    // last_distance = reading;
+  }
 }
 
 // stepper
