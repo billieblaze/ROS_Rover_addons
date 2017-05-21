@@ -1,0 +1,8 @@
+prefix=/home/pi/ROS_Rover_addons/catkin_ws/devel
+
+Name: mqtt_bridge
+Description: Description of mqtt_bridge
+Version: 0.1.5
+Cflags: 
+Libs: -L/home/pi/ROS_Rover_addons/catkin_ws/devel/lib 
+Requires: 

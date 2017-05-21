@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/pi/catkin_ws/devel/setup.sh
+    local-name: /home/pi/ROS_Rover_addons/catkin_ws/devel/setup.sh

@@ -1,31 +1,24 @@
 #!/usr/bin/env python
 import rospy
-import json 
+import json
 from std_msgs.msg import String, Bool, Int16
-from sensor_msgs.msg import NavSatFix
+from sensor_msgs.msg import NavSatFix, Range
 
 current_location = NavSatFix()
-pub_details = rospy.Publisher('/sensor/details', String, queue_size=10)
+pub_details = rospy.Publisher('/range_location', String, queue_size=10)
 
 def chatter(data):
     rospy.loginfo(rospy.get_caller_id() + "ping %s", data)
 
-def sensor(data):
-    rospy.loginfo(rospy.get_caller_id() + "sensor data %s", data)
-    #rospy.loginfo(current_location)
-    pub_details.publish(json.dumps({"location": {"latitude": current_location.latitude, "longitude": current_location.longitude, "altitude": current_location.altitude},  "sensor": data.data}))
+def range_message(data):
+    rospy.loginfo(rospy.get_caller_id() + "range sensor data %s", data)
+    rospy.loginfo(data)
+    pub_details.publish(json.dumps({"location": {"latitude": current_location.latitude, "longitude": current_location.longitude, "altitude": current_location.altitude},  "message": { "range": data.range, "direction": data.header.frame_id}}))
 
-def distance(data):
-    rospy.loginfo(rospy.get_caller_id() + "distance sensor data %s", data)
-    #rospy.loginfo(current_location)
-    #pub_details.publish(json.dumps({"location": {"latitude": current_location.latitude, "longitude": current_location.longitude, "altitude": current_location.altitude},  "sensor": data.data}))
-
-def location(data):
-    #rospy.loginfo(data)
+def set_location(data):
+    rospy.loginfo(data)
     current_location = data
-    
 
-    
 def listener():
 
     # In ROS, nodes are uniquely named. If two nodes with the same
@@ -35,9 +28,8 @@ def listener():
     # run simultaneously.
     rospy.init_node('listener', anonymous=True)
     rospy.Subscriber("chatter", String, chatter)
-    rospy.Subscriber("/sensor/hit", Bool, sensor)
-    rospy.Subscriber("/sensor/distance", Int16, distance)
-    rospy.Subscriber("/mavros/global_position/global", NavSatFix, location)
+    rospy.Subscriber("/range_data", Range, range_message)
+    rospy.Subscriber("/mavros/global_position/global", NavSatFix, set_location)
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 

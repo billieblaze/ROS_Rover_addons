@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: mqtt_bridge
+Version: 0.1.5
+Summary: The mqtt_bridge package
+Home-page: http://www.ros.org/wiki/mqtt_bridge
+Author: Junya Hayashi
+Author-email: junya.hayashi@groove-x.com
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN

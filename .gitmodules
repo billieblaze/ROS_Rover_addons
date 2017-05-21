@@ -1,3 +1,6 @@
 [submodule "web"]
 	path = web
 	url = https://github.com/billieblaze/react-docker-kit.git
+[submodule "catkin_ws/src/mqtt_bridge"]
+	path = catkin_ws/src/mqtt_bridge
+	url = https://github.com/groove-x/mqtt_bridge.git

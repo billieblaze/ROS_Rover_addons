@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pi/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/pi/ROS_Rover_addons/catkin_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pi/catkin_ws/build
+CMAKE_BINARY_DIR = /home/pi/ROS_Rover_addons/catkin_ws/build
 
 # Utility rule file for sensor_msgs_generate_messages_lisp.
 
@@ -63,10 +63,10 @@ rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/build: sensor_msgs_gener
 .PHONY : rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/build
 
 rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/clean:
-	cd /home/pi/catkin_ws/build/rover && $(CMAKE_COMMAND) -P CMakeFiles/sensor_msgs_generate_messages_lisp.dir/cmake_clean.cmake
+	cd /home/pi/ROS_Rover_addons/catkin_ws/build/rover && $(CMAKE_COMMAND) -P CMakeFiles/sensor_msgs_generate_messages_lisp.dir/cmake_clean.cmake
 .PHONY : rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/clean
 
 rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/depend:
-	cd /home/pi/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/pi/catkin_ws/src /home/pi/catkin_ws/src/rover /home/pi/catkin_ws/build /home/pi/catkin_ws/build/rover /home/pi/catkin_ws/build/rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/pi/ROS_Rover_addons/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/pi/ROS_Rover_addons/catkin_ws/src /home/pi/ROS_Rover_addons/catkin_ws/src/rover /home/pi/ROS_Rover_addons/catkin_ws/build /home/pi/ROS_Rover_addons/catkin_ws/build/rover /home/pi/ROS_Rover_addons/catkin_ws/build/rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/depend
 

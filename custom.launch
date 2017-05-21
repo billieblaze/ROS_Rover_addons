@@ -19,11 +19,15 @@
 		<arg name="log_output" value="$(arg log_output)" />
 	</include>
 
+  <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
+    <rosparam file="/home/pi/ROS_Rover_addons/config.yml" command="load" />
+  </node>
+
 	<node name="listener1" pkg="rover" type="listener.py" args="--test" respawn="true" />
 	<node name="ping" pkg="rover" type="ping.py" args="--test" respawn="true" />
 
 	<node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
-	  <param name="port" value="/dev/ttyACM0" />
+	  <param name="port" value="/dev/ttyUSB0" />
 	  <param name="baud" value="57600" />
 	</node>
 

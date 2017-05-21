@@ -1,5 +1,5 @@
 
-/* 
+/*
  * Button Example for Rosserial
  */
 
@@ -11,7 +11,7 @@ ros::NodeHandle nh;
 
 // Sensor Config
 std_msgs::Bool pushed_msg_sensor;
-ros::Publisher pub_sensor("/sensor/hit", &pushed_msg_sensor);
+ros::Publisher pub_sensor("/ping", &pushed_msg_sensor);
 
 const int button_pin = 8;
 const int led_pin = 13;
@@ -46,46 +46,43 @@ NewPing sonar[SONAR_NUM] = {     // Sensor object array.
 sensor_msgs::Range range_msg;
 ros::Publisher pub_range( "range_data", &range_msg);
 
-
 int last_distance=0;
 long last_distance_time=0;
 long distance_delay=10;
 bool published_distance = true;
- 
 
 // Stepper Config
-#include <Stepper.h>
-const int stepsPerRevolution = 200;
-//Stepper myStepper(stepsPerRevolution, 14, 15, 16, 17);
 volatile int stepCount = 0;
 int maxSteps = 200 * 10;
-int endstopPin = 53;
+int endstopPin = A3;
+int directionPin = A4;
+int stepPin = A5;
 int initializingEndstop = 0;
 
 // sensor
 void setupSensor(){
   nh.advertise(pub_sensor);
-  
-  //initialize an LED output pin 
+
+  //initialize an LED output pin
   //and a input pin for our push button
   pinMode(led_pin, OUTPUT);
   pinMode(button_pin, INPUT);
-  
+
   //Enable the pullup resistor on the button
   digitalWrite(button_pin, HIGH);
-  
+
   //The button is a normally button
   last_reading = ! digitalRead(button_pin);
 }
 
 void handleSensor(){
   bool reading = ! digitalRead(button_pin);
-  
+
   if (last_reading!= reading){
       last_debounce_time = millis();
       published_sensor = false;
   }
-  
+
   //if the button value has not changed during the debounce delay
   // we know it is stable
   if ( !published_sensor && (millis() - last_debounce_time)  > debounce_delay) {
@@ -101,7 +98,6 @@ void handleSensor(){
 // distance
 void setupDistance(){
   range_msg.radiation_type = sensor_msgs::Range::INFRARED;
-
   range_msg.field_of_view = 0.26;
   range_msg.min_range = 0.03;
   range_msg.max_range = 0.2;
@@ -113,7 +109,6 @@ void setupDistance(){
 
 }
 
-
 void echoCheck() { // If ping received, set the sensor distance to array.
   if (sonar[currentSensor].check_timer())
     cm[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_CM;
@@ -121,29 +116,29 @@ void echoCheck() { // If ping received, set the sensor distance to array.
 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
   int range = 0;
-  for (uint8_t i = 0; i < SONAR_NUM; i++) {  
-    
+  for (uint8_t i = 0; i < SONAR_NUM; i++) {
+
     range_msg.header.stamp = nh.now();
-  
+
     char frameid[4]="/  ";
     if (i == 0) {
       strncpy(frameid, "/fl", 4);
       samples_1.add(cm[i]);
       range = (int)samples_1.getMedian();
     }
-      
+
     if (i == 1){
       strncpy(frameid, "/ff", 4);
       samples_2.add(cm[i]);
       range = (int)samples_2.getMedian();
     }
 
-    if (i == 2){ 
+    if (i == 2){
       strncpy(frameid, "/fr", 4);
       samples_3.add(cm[i]);
       range = (int)samples_3.getMedian();
     }
-    
+
     range_msg.range = range;
     range_msg.header.frame_id =  frameid;
 
@@ -169,6 +164,13 @@ void handleDistance(){
 // stepper
 
 void moveStepper(int steps) {
+
+  if (steps > 0){
+    digitalWrite(directionPin, LOW);
+  } else {
+    digitalWrite(directionPin, HIGH);
+  }
+
   int targetSteps = stepCount + steps;
 
   if ( maxSteps < targetSteps ) {
@@ -179,6 +181,12 @@ void moveStepper(int steps) {
 
   if ( targetSteps < maxSteps || initializingEndstop == 1) {
     //myStepper.step(steps);
+    for (int i = 0; i < abs(steps); i++){
+      digitalWrite(stepPin, LOW);
+      delay(1);
+      digitalWrite(stepPin, HIGH);
+      delay(1);
+    }
     stepCount += steps;
     //Serial.println(stepCount);
   }
@@ -186,9 +194,15 @@ void moveStepper(int steps) {
 
 void setupStepper() {
   initializingEndstop = 1;
-  // setup endstop pin
+
+  // setup pins
   pinMode(endstopPin, INPUT);           // set pin to input
   digitalWrite(endstopPin, HIGH);       // turn on pullup resistors
+
+  pinMode(directionPin, OUTPUT);
+  pinMode(stepPin, OUTPUT);
+  digitalWrite(directionPin, HIGH);
+  digitalWrite(stepPin, LOW);
 
   // until we hit the endstop, keep moving back
   digitalWrite(13, HIGH);
@@ -204,24 +218,20 @@ void setupStepper() {
 
 }
 
+
 void setup(){
 
   nh.initNode();
-  
-  //myStepper.setSpeed(100);
 
-  //setupSensor(); 
+  setupSensor();
   setupDistance();
-
-  //setupStepper();
+  setupStepper();
 }
 
 void loop(){
-  
-  //handleSensor();
+
+  handleSensor();
   handleDistance();
-  
+
   nh.spinOnce();
 }
-
-
