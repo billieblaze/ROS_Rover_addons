@@ -36,6 +36,9 @@ RunningMedian samples_3 = RunningMedian(10);
 unsigned long pingTimer[SONAR_NUM]; // Holds the times when the next ping should happen for each sensor.
 unsigned int cm[SONAR_NUM];         // Where the ping distances are stored.
 uint8_t currentSensor = 0;          // Keeps track of which sensor is active.
+int distanceLoopTime = 5000;
+int lastDistance = 0;
+
 
 NewPing sonar[SONAR_NUM] = {     // Sensor object array.
   NewPing(2, 3, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
@@ -218,15 +221,19 @@ void setup(){
 
   nh.initNode();
 
-  setupSensor();
+  // setupSensor();
   setupDistance();
   setupStepper();
 }
 
 void loop(){
 
-  handleSensor();
-  handleDistance();
+  // handleSensor();
+
+  if (millis() - lastDistance > distanceLoopTime){
+      handleDistance();
+      lastDistance = millis();
+  }
 
   nh.spinOnce();
 }
