@@ -588,8 +588,8 @@ clean: rover/CMakeFiles/geometry_msgs_generate_messages_py.dir/clean
 # Target rules for target rover/CMakeFiles/rover_generate_messages_lisp.dir
 
 # All Build rule for target.
-rover/CMakeFiles/rover_generate_messages_lisp.dir/all: rover/CMakeFiles/_rover_generate_messages_check_deps_RangeLocation.dir/all
 rover/CMakeFiles/rover_generate_messages_lisp.dir/all: rover/CMakeFiles/std_msgs_generate_messages_lisp.dir/all
+rover/CMakeFiles/rover_generate_messages_lisp.dir/all: rover/CMakeFiles/_rover_generate_messages_check_deps_RangeLocation.dir/all
 rover/CMakeFiles/rover_generate_messages_lisp.dir/all: rover/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/all
 	$(MAKE) -f rover/CMakeFiles/rover_generate_messages_lisp.dir/build.make rover/CMakeFiles/rover_generate_messages_lisp.dir/depend
 	$(MAKE) -f rover/CMakeFiles/rover_generate_messages_lisp.dir/build.make rover/CMakeFiles/rover_generate_messages_lisp.dir/build
@@ -757,8 +757,8 @@ clean: rover/CMakeFiles/rover_generate_messages.dir/clean
 # Target rules for target rover/CMakeFiles/rover_generate_messages_py.dir
 
 # All Build rule for target.
-rover/CMakeFiles/rover_generate_messages_py.dir/all: rover/CMakeFiles/_rover_generate_messages_check_deps_RangeLocation.dir/all
 rover/CMakeFiles/rover_generate_messages_py.dir/all: rover/CMakeFiles/std_msgs_generate_messages_py.dir/all
+rover/CMakeFiles/rover_generate_messages_py.dir/all: rover/CMakeFiles/_rover_generate_messages_check_deps_RangeLocation.dir/all
 rover/CMakeFiles/rover_generate_messages_py.dir/all: rover/CMakeFiles/sensor_msgs_generate_messages_py.dir/all
 	$(MAKE) -f rover/CMakeFiles/rover_generate_messages_py.dir/build.make rover/CMakeFiles/rover_generate_messages_py.dir/depend
 	$(MAKE) -f rover/CMakeFiles/rover_generate_messages_py.dir/build.make rover/CMakeFiles/rover_generate_messages_py.dir/build

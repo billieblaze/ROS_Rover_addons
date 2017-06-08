@@ -41,7 +41,7 @@ class SWHear(object):
         self.stream=self.p.open(format=pyaudio.paInt16,channels=1,
                                 rate=self.rate,input=True,
                                 frames_per_buffer=self.chunk,
-                                input_device_index=1)
+                                input_device_index=0)
 
     def stream_stop(self):
         """close the stream but keep the PyAudio instance alive."""

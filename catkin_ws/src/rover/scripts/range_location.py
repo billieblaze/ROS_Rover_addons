@@ -13,7 +13,7 @@ def chatter(data):
     rospy.loginfo(rospy.get_caller_id() + "ping %s", data)
 
 def range_message(data):
-    #rospy.loginfo(rospy.get_caller_id() + "range sensor data %s", data)
+    rospy.loginfo(rospy.get_caller_id() + "range sensor data %s", data)
     #rospy.loginfo(data)
     msg = RangeLocation()
     msg.location = current_location

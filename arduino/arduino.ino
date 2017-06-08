@@ -24,10 +24,6 @@ bool published_sensor = true;
 
 // // Distance Config
 #include <NewPing.h>
-#include "RunningMedian.h"
-RunningMedian samples_1 = RunningMedian(10);
-RunningMedian samples_2 = RunningMedian(10);
-RunningMedian samples_3 = RunningMedian(10);
 
 #define SONAR_NUM     3 // Number of sensors.
 #define MAX_DISTANCE 200 // Maximum distance (in cm) to ping.
@@ -40,22 +36,27 @@ uint8_t currentSensor = 0;          // Keeps track of which sensor is active.
 bool publishDistance = false; 
 
 NewPing sonar[SONAR_NUM] = {     // Sensor object array.
-  NewPing(2, 3, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
-  NewPing(4, 5, MAX_DISTANCE),
-  NewPing(6, 7, MAX_DISTANCE)
+  NewPing(3, 2, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
+  NewPing(5, 4, MAX_DISTANCE),
+  NewPing(7, 6, MAX_DISTANCE)
 };
 
 sensor_msgs::Range range_msg;
-ros::Publisher pub_range( "range_data", &range_msg);
+ros::Publisher pub_range( "/range_data", &range_msg);
+
 bool published_distance = true;
 
 // Stepper Config
 volatile int stepCount = 0;
-int maxSteps = 200 * 10;
+int maxSteps = 250 * 10;
 int endstopPin = A3;
 int directionPin = A4;
 int stepPin = A5;
 int initializingEndstop = 0;
+
+std_msgs::Int16 arm_position_msg;
+ros::Publisher pub_arm_position( "/arm/position", &arm_position_msg);
+
 
 // sensor
 void setupSensor(){
@@ -89,7 +90,7 @@ void handleSensor(){
     pub_sensor.publish(&pushed_msg_sensor);
     published_sensor = true;
   }
-
+    
   last_reading = reading;
 }
 
@@ -209,15 +210,40 @@ void setupStepper() {
   digitalWrite(13, LOW);
   // hit it,  move off the endstop and reset the counter
   delay(10);
-  moveStepper(200);
+  moveStepper(100);
   stepCount = 0;
+
+  // advertise the arm position publisher
+  nh.advertise(pub_arm_position);
+}
+
+void stepperCallback( const std_msgs::Int16& position){
+  // stepCount is current position
+
+  // map rc range to step range 
+  int mapRcToPosition=(map(position.data,1065,1933,0,maxSteps)); 
+  // calculate different in requested position and target
+  int stepsToMove = 0;
+
+  if (mapRcToPosition < stepCount){
+    stepsToMove = - (stepCount - mapRcToPosition);
+  } else { 
+    stepsToMove = mapRcToPosition - stepCount; 
+  }
+
+  moveStepper(stepsToMove);
+  
+  arm_position_msg.data = mapRcToPosition;
+  pub_arm_position.publish(&arm_position_msg);
 
 }
 
+ros::Subscriber<std_msgs::Int16> sub("/arm/move", &stepperCallback );
 
 void setup(){
 
   nh.initNode();
+  nh.subscribe(sub);
 
   // setupSensor();
   setupDistance();
@@ -227,7 +253,6 @@ void setup(){
 void loop(){
 
   // handleSensor();
-
   handleDistance();
   
   nh.spinOnce();
