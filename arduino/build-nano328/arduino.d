@@ -31,5 +31,4 @@ build-nano328/arduino.o: arduino.ino \
  /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/std_msgs/Int16.h \
  /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/sensor_msgs/Range.h \
  /home/pi/ROS_Rover_addons/arduino/libraries/ros_lib/std_msgs/Header.h \
- /home/pi/ROS_Rover_addons/arduino/libraries/NewPing/NewPing.h \
- /home/pi/ROS_Rover_addons/arduino/libraries/RunningMedian/RunningMedian.h
+ /home/pi/ROS_Rover_addons/arduino/libraries/NewPing/NewPing.h

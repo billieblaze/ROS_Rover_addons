@@ -24,39 +24,39 @@ bool published_sensor = true;
 
 // // Distance Config
 #include <NewPing.h>
-#include "RunningMedian.h"
-RunningMedian samples_1 = RunningMedian(10);
-RunningMedian samples_2 = RunningMedian(10);
-RunningMedian samples_3 = RunningMedian(10);
 
 #define SONAR_NUM     3 // Number of sensors.
 #define MAX_DISTANCE 200 // Maximum distance (in cm) to ping.
 #define PING_INTERVAL 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
 unsigned long pingTimer[SONAR_NUM]; // Holds the times when the next ping should happen for each sensor.
-unsigned int cm[SONAR_NUM];         // Where the ping distances are stored.
+unsigned int cm[SONAR_NUM];
+unsigned int last_cm[SONAR_NUM];         // Where the ping distances are stored.
 uint8_t currentSensor = 0;          // Keeps track of which sensor is active.
-int distanceLoopTime = 1000;
-int lastDistance = 0;
-
+bool publishDistance = false;
 
 NewPing sonar[SONAR_NUM] = {     // Sensor object array.
-  NewPing(2, 3, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
-  NewPing(4, 5, MAX_DISTANCE),
-  NewPing(6, 7, MAX_DISTANCE)
+  NewPing(3, 2, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
+  NewPing(5, 4, MAX_DISTANCE),
+  NewPing(7, 6, MAX_DISTANCE)
 };
 
 sensor_msgs::Range range_msg;
-ros::Publisher pub_range( "range_data", &range_msg);
+ros::Publisher pub_range( "/range_data", &range_msg);
+
 bool published_distance = true;
 
 // Stepper Config
 volatile int stepCount = 0;
-int maxSteps = 200 * 10;
+int maxSteps = 250 * 10;
 int endstopPin = A3;
 int directionPin = A4;
 int stepPin = A5;
 int initializingEndstop = 0;
+
+std_msgs::Int16 arm_position_msg;
+ros::Publisher pub_arm_position( "/arm/position", &arm_position_msg);
+
 
 // sensor
 void setupSensor(){
@@ -114,48 +114,47 @@ void echoCheck() { // If ping received, set the sensor distance to array.
 }
 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
-  int range = 0;
-
-  for (uint8_t i = 0; i < SONAR_NUM; i++) {
-    range_msg.header.stamp = nh.now();
-
-    char frameid[4]="/  ";
-    if (i == 0) {
-      strncpy(frameid, "/fl", 4);
-      samples_1.add(cm[i]);
-      range = (int)samples_1.getMedian();
-    }
-
-    if (i == 1){
-      strncpy(frameid, "/ff", 4);
-      samples_2.add(cm[i]);
-      range = (int)samples_2.getMedian();
-    }
-
-    if (i == 2){
-      strncpy(frameid, "/fr", 4);
-      samples_3.add(cm[i]);
-      range = (int)samples_3.getMedian();
-    }
-
-    range_msg.range = range;
-    range_msg.header.frame_id =  frameid;
-
-    pub_range.publish(&range_msg);
-  }
-
+ publishDistance = true;
 }
 
 void handleDistance(){
-  for (uint8_t i = 0; i < SONAR_NUM; i++) { // Loop through all the sensors.
-    if (millis() >= pingTimer[i]) {         // Is it this sensor's time to ping?
-      pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
-      if (i == 0 && currentSensor == SONAR_NUM - 1) oneSensorCycle(); // Sensor ping cycle complete, do something with the results.
-      sonar[currentSensor].timer_stop();          // Make sure previous timer is canceled before starting a new ping (insurance).
-      currentSensor = i;                          // Sensor being accessed.
-      cm[currentSensor] = 0;                      // Make distance zero in case there's no ping echo for this sensor.
-      sonar[currentSensor].ping_timer(echoCheck); // Do the ping (processing continues, interrupt will call echoCheck to look for echo).
+
+  if ( publishDistance == false ) {
+    for (uint8_t i = 0; i < SONAR_NUM; i++) { // Loop through all the sensors.
+      if (millis() >= pingTimer[i]) {         // Is it this sensor's time to ping?
+        pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
+        if (i == 0 && currentSensor == SONAR_NUM - 1) oneSensorCycle(); // Sensor ping cycle complete, do something with the results.
+        currentSensor = i;                          // Sensor being accessed.
+        cm[currentSensor] =  sonar[currentSensor].ping_cm(); // Do the ping (processing continues, interrupt will call echoCheck to look for echo).
+      }
     }
+  }
+
+  if ( publishDistance == true ) {
+     range_msg.header.stamp = nh.now();
+     for (uint8_t i = 0; i < SONAR_NUM; i++) {
+
+        char frameid[4]="/  ";
+
+        if (i == 0) {
+          strncpy(frameid, "/fl", 4);
+        }
+
+         if (i == 1){
+           strncpy(frameid, "/ff", 4);
+         }
+
+         if (i == 2){
+           strncpy(frameid, "/fr", 4);
+         }
+
+
+        range_msg.range = cm[i];
+        range_msg.header.frame_id =  frameid;
+
+        pub_range.publish(&range_msg);
+        publishDistance = false;
+      }
   }
 }
 
@@ -211,15 +210,40 @@ void setupStepper() {
   digitalWrite(13, LOW);
   // hit it,  move off the endstop and reset the counter
   delay(10);
-  moveStepper(200);
+  moveStepper(100);
   stepCount = 0;
+
+  // advertise the arm position publisher
+  nh.advertise(pub_arm_position);
+}
+
+void stepperCallback( const std_msgs::Int16& position){
+  // stepCount is current position
+
+  // map rc range to step range
+  int mapRcToPosition=(map(position.data,1065,1933,0,maxSteps));
+  // calculate different in requested position and target
+  int stepsToMove = 0;
+
+  if (mapRcToPosition < stepCount){
+    stepsToMove = - (stepCount - mapRcToPosition);
+  } else {
+    stepsToMove = mapRcToPosition - stepCount;
+  }
+
+  moveStepper(stepsToMove);
+
+  arm_position_msg.data = mapRcToPosition;
+  pub_arm_position.publish(&arm_position_msg);
 
 }
 
+ros::Subscriber<std_msgs::Int16> sub("/arm/move", &stepperCallback );
 
 void setup(){
 
   nh.initNode();
+  nh.subscribe(sub);
 
   // setupSensor();
   setupDistance();
@@ -229,11 +253,7 @@ void setup(){
 void loop(){
 
   // handleSensor();
-
-  if (millis() - lastDistance > distanceLoopTime){
-      handleDistance();
-      lastDistance = millis();
-  }
+  handleDistance();
 
   nh.spinOnce();
 }

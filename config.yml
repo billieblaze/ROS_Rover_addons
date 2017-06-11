@@ -14,7 +14,7 @@ bridge:
 
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: sensor_msgs.msg:NavSatFix
-    topic_from: /mavros/global_position/global
+    topic_from: /current_location
     topic_to: current_location
 
   #- factory: mqtt_bridge.bridge:RosToMqttBridge
@@ -23,7 +23,7 @@ bridge:
   #  topic_to: range_data
 
   - factory: mqtt_bridge.bridge:RosToMqttBridge
-    msg_type: std_msgs.msg:String
+    msg_type: rover.msg:RangeLocation
     topic_from: /range_location
     topic_to: range_location
 

@@ -10,8 +10,10 @@ void setup() {
 }
 
 void loop() {
+ 
   digitalWrite(stepPin, HIGH);
-  delay(1);
-  digitalWrite(stepPin, LOW);
-  delay(1);
+  delay(10);
+ 
+ digitalWrite(stepPin, LOW);
+  delay(10);
 }

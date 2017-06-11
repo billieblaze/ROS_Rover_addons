@@ -8,8 +8,10 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/pi/ROS_Rover_addons/catkin_ws/devel:$CMAKE_PREFIX_PATH"
+export CPATH="/home/pi/ROS_Rover_addons/catkin_ws/devel/include:$CPATH"
 export LD_LIBRARY_PATH="/home/pi/ROS_Rover_addons/catkin_ws/devel/lib:$LD_LIBRARY_PATH"
 export PKG_CONFIG_PATH="/home/pi/ROS_Rover_addons/catkin_ws/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD="/home/pi/ROS_Rover_addons/catkin_ws/build"
+export PYTHONPATH="/home/pi/ROS_Rover_addons/catkin_ws/devel/lib/python2.7/dist-packages:$PYTHONPATH"
 export ROSLISP_PACKAGE_DIRECTORIES="/home/pi/ROS_Rover_addons/catkin_ws/devel/share/common-lisp"
-export ROS_PACKAGE_PATH="/home/pi/catkin_ws/src:/home/pi/ROS_Rover_addons/catkin_ws/src:$ROS_PACKAGE_PATH"
+export ROS_PACKAGE_PATH="/home/pi/ROS_Rover_addons/catkin_ws/src:$ROS_PACKAGE_PATH"

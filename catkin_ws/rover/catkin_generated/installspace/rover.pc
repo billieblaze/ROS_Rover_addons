@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: rover
+Description: Description of rover
+Version: 0.0.0
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib -lrover
+Requires: roscpp rospy rosserial_python sensor_msgs std_msgs message_runtime

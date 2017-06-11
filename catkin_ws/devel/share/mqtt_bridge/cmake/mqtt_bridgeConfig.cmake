@@ -74,7 +74,7 @@ if("TRUE" STREQUAL "TRUE")
 else()
   set(mqtt_bridge_SOURCE_PREFIX "")
   set(mqtt_bridge_DEVEL_PREFIX "")
-  set(mqtt_bridge_INSTALL_PREFIX /home/pi/ROS_Rover_addons/catkin_ws/install)
+  set(mqtt_bridge_INSTALL_PREFIX /usr/local)
   set(mqtt_bridge_PREFIX ${mqtt_bridge_INSTALL_PREFIX})
 endif()
 
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/pi/ROS_Rover_addons/catkin_ws/devel/lib;/opt/ros/indigo/lib)
+    foreach(path /home/pi/ROS_Rover_addons/catkin_ws/devel/lib;/home/pi/ROS_Rover_addons/catkin_ws/devel/lib;/opt/ros/indigo/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
