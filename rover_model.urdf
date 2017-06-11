@@ -91,6 +91,30 @@
       <origin rpy="1.55 0 0" xyz=".37 0 0.2"/>
     </visual>
   </link>
+<link name="/fl">
+    <visual>
+      <geometry>
+        <box size=".01 .01 .01"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz=".37 0 0.3"/>
+    </visual>
+  </link>
+<link name="/ff">
+    <visual>
+      <geometry>
+        <box size=".01 .01 .01"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz=".37 0.1 0.3"/>
+    </visual>
+  </link>
+<link name="/fr">
+    <visual>
+      <geometry>
+        <box size=".01 .01 .01"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz=".37 -0.1 0.3"/>
+    </visual>
+  </link>
 
 <link name="arm">
     <visual>
