@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<robot name="myfirst">
+  <link name="base">
+    <visual>
+      <geometry>
+        <box size=".6 .6 .3"/>
+      </geometry>
+     <material name="green">
+           <color rgb="0 255 0"/>
+        </material>
+         
+    </visual>
+  </link>
+  <link name="neck">
+    <visual>
+      <geometry>
+        <cylinder length="0.2" radius="0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.25"/>
+    </visual>
+  </link>
+  <link name="head">
+    <visual>
+      <geometry>
+        <box size=".3 .2 .15"/>
+      </geometry>
+      <material name="gold">
+           <color rgb="100 255 10"/>
+        </material>
+      <origin rpy="0 0 1.55" xyz="0 0 0.4"/>
+    </visual>
+  </link>
+  <joint name="base_to_head" type="fixed">
+    <parent link="base"/>
+    <child link="neck"/>
+  </joint>
+
+<link name="wheel1">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.1"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz="-.34 -.3 -0.2"/>
+    </visual>
+  </link>
+<link name="wheel2">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.1"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz="-.34 .3 -0.2"/>
+    </visual>
+  </link>
+<link name="wheel3">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.15"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz=".25 .3 -0.15"/>
+    </visual>
+  </link>
+<link name="wheel4">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.15"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz=".25 -.3 -0.15"/>
+    </visual>
+  </link>
+ <link name="mount">
+    <visual>
+      <geometry>
+        <box size=".02 .02 .2"/>
+      </geometry>
+      <origin rpy="1.55 1.55 0" xyz=".3 0 0.02"/>
+    </visual>
+  </link>
+	<link name="mount2">
+    <visual>
+      <geometry>
+        <box size=".02 .02 .2"/>
+      </geometry>
+      <origin rpy="0 0 1.55" xyz=".37 0 0.08"/>
+    </visual>
+  </link>
+<link name="mount3">
+    <visual>
+      <geometry>
+        <box size=".04 .04 .2"/>
+      </geometry>
+      <origin rpy="1.55 0 0" xyz=".37 0 0.2"/>
+    </visual>
+  </link>
+
+<link name="arm">
+    <visual>
+      <geometry>
+        <box size=".02 .02 .2"/>
+      </geometry>
+      <origin rpy="1.55 1.55 0" xyz=".5 0 0.2"/>
+    </visual>
+  </link>
+
+ <joint name="mount to arm" type="revolute">
+    <parent link="mount3"/>
+    <child link="arm"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0.2 0.01 0"/>
+  </joint>
+
+</robot>	
