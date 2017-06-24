@@ -1,2 +1,0 @@
-mqtt_bridge:rover
--DCATKIN_DEVEL_PREFIX=/home/pi/ROS_Rover_addons/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/pi/ROS_Rover_addons/catkin_ws/install -G Unix Makefiles

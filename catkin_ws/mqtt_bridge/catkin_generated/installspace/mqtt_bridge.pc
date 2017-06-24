@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: mqtt_bridge
-Description: Description of mqtt_bridge
-Version: 0.1.5
-Cflags: 
-Libs: -L/usr/local/lib 
-Requires: 

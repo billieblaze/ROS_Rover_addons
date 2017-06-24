@@ -1,8 +1,0 @@
-prefix=/home/pi/ROS_Rover_addons/catkin_ws/devel
-
-Name: rover
-Description: Description of rover
-Version: 0.0.0
-Cflags: -I/home/pi/ROS_Rover_addons/catkin_ws/devel/include -I/home/pi/ROS_Rover_addons/catkin_ws/src/rover/include
-Libs: -L/home/pi/ROS_Rover_addons/catkin_ws/devel/lib -lrover
-Requires: roscpp rospy rosserial_python sensor_msgs std_msgs message_runtime
