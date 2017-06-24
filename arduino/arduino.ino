@@ -30,7 +30,7 @@ bool published_sensor = true;
 #define PING_INTERVAL 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
 unsigned long pingTimer[SONAR_NUM]; // Holds the times when the next ping should happen for each sensor.
-unsigned int cm[SONAR_NUM];
+float cm[SONAR_NUM];
 unsigned int last_cm[SONAR_NUM];         // Where the ping distances are stored.
 uint8_t currentSensor = 0;          // Keeps track of which sensor is active.
 bool publishDistance = false;
@@ -59,7 +59,7 @@ ros::Publisher pub_arm_position( "/arm/position", &arm_position_msg);
 
 
 // sensor
-void setupSensor(){
+void setupDigitalSensor(){
   nh.advertise(pub_sensor);
 
   //initialize an LED output pin
@@ -99,7 +99,7 @@ void setupDistance(){
   range_msg.radiation_type = sensor_msgs::Range::INFRARED;
   range_msg.field_of_view = 0.26;
   range_msg.min_range = 0.03;
-  range_msg.max_range = 0.2;
+  range_msg.max_range = 2;
 
   nh.advertise(pub_range);
   pingTimer[0] = millis() + 75;           // First ping starts at 75ms, gives time for the Arduino to chill before starting.
@@ -110,7 +110,7 @@ void setupDistance(){
 
 void echoCheck() { // If ping received, set the sensor distance to array.
   if (sonar[currentSensor].check_timer())
-    cm[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_CM;
+    cm[currentSensor] = (sonar[currentSensor].ping_result / US_ROUNDTRIP_CM);
 }
 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
@@ -134,22 +134,22 @@ void handleDistance(){
      range_msg.header.stamp = nh.now();
      for (uint8_t i = 0; i < SONAR_NUM; i++) {
 
-        char frameid[4]="/  ";
+        char frameid[4]="  ";
 
         if (i == 0) {
-          strncpy(frameid, "/fl", 4);
+          strncpy(frameid, "fl", 4);
         }
 
          if (i == 1){
-           strncpy(frameid, "/ff", 4);
+           strncpy(frameid, "ff", 4);
          }
 
          if (i == 2){
-           strncpy(frameid, "/fr", 4);
+           strncpy(frameid, "fr", 4);
          }
 
 
-        range_msg.range = cm[i];
+        range_msg.range = cm[i]/100.0;
         range_msg.header.frame_id =  frameid;
 
         pub_range.publish(&range_msg);
@@ -245,9 +245,9 @@ void setup(){
   nh.initNode();
   nh.subscribe(sub);
 
-  // setupSensor();
+  // setupDigitalSensor();
   setupDistance();
-  setupStepper();
+//  setupStepper();
 }
 
 void loop(){
