@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<robot name="myfirst">
+  <material name="green">
+     <color rgba="0 0.8 0 1"/>
+   </material>
+
+   <material name="black">
+   <color rgba="0 0 0 1"/>
+ </material>
+
+ <material name="gold">
+   <color rgba="0.5 0.5 0.5 1"/>
+ </material>
+
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size=".6 .6 .3"/>
+      </geometry>
+      <material name="green"/>
+      <origin rpy="0 0 0" xyz="0 0 0.2"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.6" radius="0.5"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <link name="fr">
+      <visual>
+        <geometry>
+          <box size=".01 .01 .01"/>
+        </geometry>
+        <origin rpy="1.55 0.1 0.3" xyz=".37 0 0.35"/>
+      </visual>
+    </link>
+  <link name="ff">
+      <visual>
+        <geometry>
+          <box size=".01 .01 .01"/>
+        </geometry>
+        <origin rpy="1.55 0.2 0.3" xyz=".37 0 0.35"/>
+      </visual>
+    </link>
+  <link name="fl">
+      <visual>
+        <geometry>
+          <box size=".01 .01 .01"/>
+        </geometry>
+        <origin rpy="1.55 0.3 0.3" xyz=".37 0 0.35"/>
+      </visual>
+    </link>
+
+    <joint name="mount_to_fr" type="fixed">
+      <parent link="base_link"/>
+      <child link="fr"/>
+      <origin rpy="1.55 0.1 -1" xyz=".37 0 0.35"/>
+    </joint>
+    <joint name="mount_to_ff" type="fixed">
+      <parent link="base_link"/>
+      <child link="ff"/>
+        <origin rpy="1.55 0.1 0" xyz=".37 0 0.35"/>
+    </joint>
+    <joint name="mount_to_fl" type="fixed">
+      <parent link="base_link"/>
+      <child link="fl"/>
+        <origin rpy="1.55 0.1 1" xyz=".37 0 0.35"/>
+    </joint>
+
+</robot>

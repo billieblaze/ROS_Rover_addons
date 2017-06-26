@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /TF1/Frames1
         - /Camera1
+        - /Camera1/Status1
       Splitter Ratio: 0.5
     Tree Height: 300
   - Class: rviz/Selection
@@ -28,7 +29,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: Camera
 Visualization Manager:
   Class: ""
   Displays:
@@ -110,6 +111,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        usb_cam:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         wheel1:
           Alpha: 1
           Show Axes: false
@@ -163,6 +169,8 @@ Visualization Manager:
           Value: true
         neck:
           Value: true
+        usb_cam:
+          Value: true
         wheel1:
           Value: true
         wheel2:
@@ -192,7 +200,8 @@ Visualization Manager:
                     {}
             neck:
               fcu:
-                {}
+                usb_cam:
+                  {}
             wheel1:
               {}
             wheel2:
@@ -299,7 +308,7 @@ Visualization Manager:
     - Class: rviz/Camera
       Enabled: true
       Image Rendering: background and overlay
-      Image Topic: ""
+      Image Topic: /usb_cam/image_raw
       Name: Camera
       Overlay Alpha: 0.5
       Queue Size: 2

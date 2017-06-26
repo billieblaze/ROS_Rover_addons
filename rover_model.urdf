@@ -53,6 +53,22 @@
     <child link="fcu"/>
   </joint>
 
+  <link name="camera">
+    <visual>
+      <geometry>
+        <box size=".05 .05 .05"/>
+      </geometry>
+      <material name="black"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+  </link>
+
+  <joint name="head_to_camera" type="fixed">
+    <parent link="fcu"/>
+    <child link="camera"/>
+    <origin rpy="0 0 0" xyz="0 0 0.65"/>
+  </joint>
+
   <link name="wheel1">
       <visual>
         <geometry>
@@ -105,6 +121,7 @@
       <parent link="base_link"/>
       <child link="wheel4"/>
     </joint>
+
  <link name="mount1">
     <visual>
       <geometry>
@@ -146,43 +163,48 @@
   </joint>
 
 
-<link name="fl">
-    <visual>
-      <geometry>
-        <box size=".01 .01 .01"/>
-      </geometry>
-      <origin rpy="1.55 0.1 0.3" xyz=".37 0 0.3"/>
-    </visual>
-  </link>
-<link name="ff">
-    <visual>
-      <geometry>
-        <box size=".01 .01 .01"/>
-      </geometry>
-      <origin rpy="1.55 0.2 0.3" xyz=".37 0.1 0.3"/>
-    </visual>
-  </link>
-<link name="fr">
-    <visual>
-      <geometry>
-        <box size=".01 .01 .01"/>
-      </geometry>
-      <origin rpy="1.55 0.3 0.3" xyz=".37 -0.1 0.3"/>
-    </visual>
-  </link>
 
-  <joint name="mount_to_fl" type="fixed">
-    <parent link="mount3"/>
-    <child link="fl"/>
-  </joint>
-  <joint name="mount_to_ff" type="fixed">
-    <parent link="mount3"/>
-    <child link="ff"/>
-  </joint>
-  <joint name="mount_to_fr" type="fixed">
-    <parent link="mount3"/>
-    <child link="fr"/>
-  </joint>
+
+    <link name="fr">
+        <visual>
+          <geometry>
+            <box size=".01 .01 .01"/>
+          </geometry>
+          <origin rpy="1.55 0.1 0.3" xyz=".37 0 0.3"/>
+        </visual>
+      </link>
+    <link name="ff">
+        <visual>
+          <geometry>
+            <box size=".01 .01 .01"/>
+          </geometry>
+          <origin rpy="1.55 0.2 0.3" xyz=".37 0 0.3"/>
+        </visual>
+      </link>
+    <link name="fl">
+        <visual>
+          <geometry>
+            <box size=".01 .01 .01"/>
+          </geometry>
+          <origin rpy="1.55 0.3 0.3" xyz=".37 0 0.3"/>
+        </visual>
+      </link>
+
+      <joint name="mount_to_fr" type="fixed">
+        <parent link="base_link"/>
+        <child link="fr"/>
+        <origin rpy="1.55 0.1 -1" xyz=".37 0.1 0.3"/>
+      </joint>
+      <joint name="mount_to_ff" type="fixed">
+        <parent link="base_link"/>
+        <child link="ff"/>
+          <origin rpy="1.55 0.1 0" xyz=".37 0.1 0.3"/>
+      </joint>
+      <joint name="mount_to_fl" type="fixed">
+        <parent link="base_link"/>
+        <child link="fl"/>
+          <origin rpy="1.55 0.1 1" xyz=".37 0.1 0.3"/>
+      </joint>
 
 <link name="arm">
     <visual>

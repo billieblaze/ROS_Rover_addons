@@ -1,15 +1,28 @@
 <launch>
 
-  <arg name="model" default="/home/bblaze//Desktop/workspace/ROS_Rover_addons/rover_model.urdf"/>
+  <arg name="model" default="$(find rover)/rover_model.urdf"/>
   <arg name="gui" default="true" />
-  <arg name="rvizconfig" default="/home/bblaze/Desktop/workspace/ROS_Rover_addons/rover.rviz" />
+  <arg name="rvizconfig" default="$(find rover)/rover.rviz" />
 
-  <param name="robot_description" command="$(find xacro)/xacro.py /home/bblaze/Desktop/workspace/ROS_Rover_addons/rover_model.urdf" />
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find rover)/rover_model.urdf" />
   <param name="use_gui" value="$(arg gui)"/>
 
-  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /map /base_link 100" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /map /base_link 100" /> -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="720" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="camera" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <!-- <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/usb_cam/image_raw"/>
+    <param name="autosize" value="true" />
+  </node> -->
 </launch>
