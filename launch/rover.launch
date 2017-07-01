@@ -23,6 +23,8 @@
     <rosparam file="/home/pi/ROS_Rover_addons/config.yml" command="load" />
   </node>
 
+	<node name="rc" pkg="rover" type="rc.py" args="--test" respawn="true" />
+
 	<node name="range_location" pkg="rover" type="range_location.py" args="--test" respawn="true" />
 	
 	<node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
