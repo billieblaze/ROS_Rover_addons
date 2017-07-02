@@ -3,22 +3,15 @@ import rospy
 import json
 import time
 
-import model.fft
+from model import fft
 from model.sw_hear import SWHear
 import numpy as np
 
-from std_msgs.msg import String, Bool, Int16
-from sensor_msgs.msg import NavSatFix
+from std_msgs.msg import String, Bool, Int16, Float32
 
-current_location = NavSatFix()
-
-pub_details = rospy.Publisher('/sensor/audio', String, queue_size=10)
+pub_details = rospy.Publisher('/sensor/audio',Float32, queue_size=10)
 
 ear=SWHear()
-
-def set_location(data):
-    #rospy.loginfo(data)
-    current_location = data
 
 def listener():
     # In ROS, nodes are uniquely named. If two nodes with the same
@@ -27,7 +20,6 @@ def listener():
     # name for our 'listener' node so that multiple listeners can
     # run simultaneously.
     rospy.init_node('audio_in', anonymous=True)
-    rospy.Subscriber("/mavros/global_position/global", NavSatFix, set_location)
 
     t1=0
     plot_sec = .25
@@ -47,11 +39,11 @@ def listener():
             #print samples
             #freq = fft.freq_from_fft(samples, rate)
             freq = fft.freq_from_fft(np.nan_to_num(tape), rate)
-            print '%f Hz'   %  freq
+            #print '%f Hz'   %  freq
 
-            if freq != last_freq:
-                pub_details.publish(json.dumps({"location": {"latitude": current_location.latitude, "longitude": current_location.longitude, "altitude": current_location.altitude},  "sensor": freq}))
-                last_freq = freq
+      #      if freq != last_freq:
+            pub_details.publish(Float32(freq))
+            last_freq = freq
 
 
     # ear.tape_forever()
