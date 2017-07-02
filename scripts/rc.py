@@ -34,13 +34,13 @@ def rc_handler(data):
     #     print('Disable arm: %d' % data.channels[8])
 
     # CHANNEL 9 = ARMING
-    if armed == False and data.channels[8] and data.channels[8] <  1100:
+    if armed == False and len(data.channels) > 8 and data.channels[8] <  1100:
         print('arm')
         armed = True
         armService = rospy.ServiceProxy('/mavros/cmd/arming', mavros_msgs.srv.CommandBool)
         armService(True)
     
-    if armed == True and data.channels[8] and data.channels[8] >  1100:
+    if armed == True and len(data.channels) > 8 and data.channels[8] >  1100:
         print('disarm')
         armed = False 
         armService = rospy.ServiceProxy('/mavros/cmd/arming', mavros_msgs.srv.CommandBool)
