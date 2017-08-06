@@ -24,7 +24,7 @@
 	</include>
 
   <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
-    <rosparam file="/home/pi/ROS_Rover_addons/config.yml" command="load" />
+    <rosparam file="$(find rover)/config.yml" command="load" />
   </node>
 
 	<node name="range_location" pkg="rover" type="range_location.py" args="--test" respawn="true" />
