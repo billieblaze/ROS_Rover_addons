@@ -28,7 +28,7 @@
   </node>
 
 	<node name="range_location" pkg="rover" type="range_location.py" args="--test" respawn="true" />
-	<node name="kinect_auxpkg" pkg="kinect_aux" type="kinect_aux_node"/>
+  <node name="kinect_aux_pkg" pkg="kinect_aux" type="kinect_aux_node" respawn="true" />
 
 	<node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen" respawn="true">
 	  <param name="port" value="/dev/ttyUSB0" />
