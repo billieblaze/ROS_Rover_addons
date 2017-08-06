@@ -15,7 +15,7 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
-  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+  <!-- <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
     <param name="video_device" value="/dev/video0" />
     <param name="image_width" value="720" />
     <param name="image_height" value="480" />
@@ -26,13 +26,13 @@
   <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot2" args="/mavros/battery"/> -->
 
   <!-- Publishes the voxel grid to rviz for display -->
-  <node pkg="costmap_2d" type="costmap_2d_markers" name="voxel_visualizer">
+  <!-- <node pkg="costmap_2d" type="costmap_2d_markers" name="voxel_visualizer">
     <remap from="voxel_grid" to="costmap/voxel_grid"/>
-  </node>
+  </node> -->
 
   <!-- Run the costmap node -->
-  <node name="costmap_node" pkg="costmap_2d" type="costmap_2d_node" >
+  <!-- <node name="costmap_node" pkg="costmap_2d" type="costmap_2d_node" >
     <rosparam file="$(find rover)/launch/params.yml" command="load" ns="costmap" />
-  </node>
+  </node> --> -->
 
 </launch>
