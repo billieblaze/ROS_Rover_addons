@@ -22,7 +22,7 @@
     <param name="pixel_format" value="yuyv" />
     <param name="camera_frame_id" value="camera" />
     <param name="io_method" value="mmap"/>
-  </node>
+  </node>-->
   <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot2" args="/mavros/battery"/> -->
 
   <!-- Publishes the voxel grid to rviz for display -->
@@ -33,6 +33,6 @@
   <!-- Run the costmap node -->
   <!-- <node name="costmap_node" pkg="costmap_2d" type="costmap_2d_node" >
     <rosparam file="$(find rover)/launch/params.yml" command="load" ns="costmap" />
-  </node> --> -->
+  </node> -->
 
 </launch>

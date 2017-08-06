@@ -53,7 +53,7 @@
     <child link="fcu"/>
   </joint>
 
-  <link name="camera">
+  <link name="camera_link">
     <visual>
       <geometry>
         <box size=".05 .05 .05"/>
@@ -65,7 +65,7 @@
 
   <joint name="head_to_camera" type="fixed">
     <parent link="fcu"/>
-    <child link="camera"/>
+    <child link="camera_link"/>
     <origin rpy="0 0 0" xyz="0 0 0.65"/>
   </joint>
 

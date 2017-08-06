@@ -11,7 +11,7 @@
 	<include file="$(find freenect_launch)/launch/freenect.launch">
 		<arg name="libfreenect_debug" value="true" />
 	</include>
-	
+
 	<include file="$(find mavros)/launch/node.launch">
 		<arg name="pluginlists_yaml" value="$(find mavros)/launch/apm_pluginlists.yaml" />
 		<arg name="config_yaml" value="$(find mavros)/launch/apm_config.yaml" />
@@ -28,8 +28,8 @@
   </node>
 
 	<node name="range_location" pkg="rover" type="range_location.py" args="--test" respawn="true" />
-
-	<node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
+  <node name="kinect_aux" pkg="kinect_aux" name="kinect_aux_node" respawn="true" />
+	<node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen" respawn="true">
 	  <param name="port" value="/dev/ttyUSB0" />
 	  <param name="baud" value="57600" />
 	</node>
