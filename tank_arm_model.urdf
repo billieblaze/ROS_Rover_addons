@@ -1,0 +1,224 @@
+<robot name="pi_robot">
+
+	<!-- * * * Link Definitions * * * -->
+
+ 	<link name="base_link">
+		<visual>
+		    <origin xyz="0 0 0.19" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.61 0.43 0.01"/>
+			</geometry>
+			<material name="Black1">
+	       		<color rgba="0 0 0 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+  <link name="enclosure_link">
+    <visual>
+        <origin xyz="-0.23 0 0.3" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3 0.43 0.24"/>
+      </geometry>
+      <material name="Black1">
+            <color rgba="0 0 0 1.0"/>
+        </material>
+    </visual>
+  </link>
+
+	<link name="left_track_link">
+		<visual>
+		    <origin xyz="0 0.25 0.05" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.61 0.07 0.23"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+  <link name="left_track_drive_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="1.57 0 0"/>
+			<geometry>
+				<cylinder radius="0.115" length="0.01"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="right_track_link">
+		<visual>
+		    <origin xyz="0 -0.25 0.05" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.61 0.07 0.23"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+  <link name="right_track_drive_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="1.57 0 0"/>
+			<geometry>
+				<cylinder radius="0.115" length="0.01"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="arm_base_link">
+		<visual>
+		    <origin xyz="0.1 0 0.2" rpy="0 0 0"/>
+			<geometry>
+				<cylinder radius=".08" length="0.08"/>
+			</geometry>
+			<material name="grey1">
+	       		<color rgba="0.1 0.1 0.1 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="arm_shoulder_link">
+		<visual>
+
+    <origin xyz="0 0 0.07" rpy="0 0 1.57"/>
+			<geometry>
+				<cylinder radius=".08" length="0.23"/>
+			</geometry>
+			<material name="purple">
+	       		<color rgba="0.5 0 0.5 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="arm_upper_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<cylinder radius=".06" length="0.28"/>
+			</geometry>
+			<material name="purple">
+	       		<color rgba="0.5 0 0.5 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="arm_elbow_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<cylinder radius=".04" length="0.14"/>
+			</geometry>
+			<material name="Black1">
+	       		<color rgba="0 0 0  1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="arm_wrist_rotate_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<cylinder radius=".04" length="0.14"/>
+			</geometry>
+			<material name="Purple1">
+	       		<color rgba="0.5 0 0.5  1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="arm_wrist_tilt_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<cylinder radius=".02" length="0.07"/>
+			</geometry>
+			<material name="Black1">
+	       		<color rgba="0 0 0  1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="arm_gripper_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<cylinder radius=".01" length="0.12"/>
+			</geometry>
+			<material name="Purple1">
+	       		<color rgba="0.5 0 0.5 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+  <joint name="enclosure_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="enclosure_link"/>
+  </joint>
+
+  <joint name="left_track_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_track_link"/>
+  </joint>
+  <joint name="left_track_drive_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_track_drive_link"/>
+    <axis xyz="0 1 0"/>
+<origin xyz="0 0.3 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="right_track_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_track_link"/>
+  </joint>
+  <joint name="right_track_drive_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_track_drive_link"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.3 0.05" rpy="0 0 0"/>
+  </joint>
+
+	<joint name="arm_base_joint" type="fixed">
+    	<parent link="base_link"/>
+    	<child link="arm_base_link"/>
+    	<origin xyz="0 0 0" rpy="0 0 0"/>
+	</joint>
+	<joint name="arm_shoulder_joint" type="revolute">
+    	<parent link="arm_base_link"/>
+    	<child link="arm_shoulder_link"/>
+    	<origin xyz="0.1 0 0.28" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+          <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+	</joint>
+	<joint name="arm_upper_joint" type="revolute">
+    	<parent link="arm_shoulder_link"/>
+    	<child link="arm_upper_link"/>
+    	<origin xyz="0 0 0.28" rpy="0 0 0"/>
+        <axis xyz="0.1 0 0"/>
+          <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+	</joint>
+<joint name="arm_elbow_joint" type="revolute">
+    	<parent link="arm_upper_link"/>
+    	<child link="arm_elbow_link"/>
+    	<origin xyz="0 0 0.14" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+          <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+	</joint>
+<joint name="arm_wrist_rotate_joint" type="revolute">
+    	<parent link="arm_elbow_link"/>
+    	<child link="arm_wrist_rotate_link"/>
+    	<origin xyz="0 0 0.14" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+          <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+	</joint>
+<joint name="arm_wrist_tilt_joint" type="revolute">
+    	<parent link="arm_wrist_rotate_link"/>
+    	<child link="arm_wrist_tilt_link"/>
+    	<origin xyz="0 0 0.07" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+          <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+	</joint>
+	<joint name="arm_gripper_joint" type="fixed">
+    	<parent link="arm_wrist_tilt_link"/>
+    	<child link="arm_gripper_link"/>
+    	<origin xyz="0 0 0.14" rpy="0 0 0"/>
+        <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+	</joint>
+
+</robot>

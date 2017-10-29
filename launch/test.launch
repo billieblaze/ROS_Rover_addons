@@ -1,0 +1,18 @@
+<launch>
+
+  <arg name="model" default="$(find rover)/tank_arm_model.urdf"/>
+  <arg name="gui" default="true" />
+  <arg name="rvizconfig" default="$(find rover)/test.rviz" />
+  <arg name="osm_url" default="file:///home/bblaze/Desktop/north-carolina-latest.osm" />
+
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find rover)/tank_arm_model.urdf" />
+  <param name="use_gui" value="$(arg gui)"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="localmap_broadcaster" args="622150 3362350 0 0 0 0 1 /map /local_map 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /local_map /base_link 100" />
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz"  args="-d $(arg rvizconfig)" required="true" />
+
+</launch>
