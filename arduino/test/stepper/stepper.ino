@@ -18,7 +18,7 @@ AccelStepper stepper4(AccelStepper::DRIVER,39,40,41);
 AccelStepper stepper5(AccelStepper::DRIVER,42,43,44);
 
 void setup()
-{  
+{
     // wrist tilt
     stepper1.setMaxSpeed(500.0);
     stepper1.setAcceleration(3000.0);
@@ -38,7 +38,7 @@ void setup()
     // shoulder rotate
     stepper5.setMaxSpeed(500.0);
     stepper5.setAcceleration(3000.0);
-   
+
 }
 
 int pos = 2000;
@@ -51,7 +51,7 @@ void loop()
     pos = -pos;
     stepper1.moveTo(pos);\
   }
-  
+
   stepper1.run();
   stepper2.run();
   stepper3.run();

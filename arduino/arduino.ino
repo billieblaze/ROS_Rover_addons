@@ -56,10 +56,10 @@ void handleSensor(){
   if ( !published_sensor && (millis() - last_debounce_time)  > debounce_delay) {
     digitalWrite(led_pin, reading);
     pushed_msg_sensor.data = reading;
-    pub_sensor.publish(&pushed_msg_sensor);
     published_sensor = true;
   }
 
+  pub_sensor.publish(&pushed_msg_sensor);
   last_reading = reading;
 }
 
@@ -140,6 +140,7 @@ AccelStepper stepper5(AccelStepper::DRIVER,42,43,44);
 int pos = 2000;
 
 void setupSteppers(){
+
   // wrist tilt
   stepper1.setMaxSpeed(500.0);
   stepper1.setAcceleration(3000.0);
@@ -161,31 +162,61 @@ void setupSteppers(){
   stepper5.setAcceleration(3000.0);
 }
 
+
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
+  int multiplier = 100;
+nh.loginfo("loop");
   if (stepper1.distanceToGo() == 0){
-    delay(500);
-    pos = -pos;
-    stepper1.moveTo(pos);
+    int pos1 = (int) cmd_msg.position[2];
+    stepper1.moveTo( pos1 *multiplier );
   }
+  if (stepper2.distanceToGo() == 0){
+    int pos2 = (int) cmd_msg.position[3];
+    stepper2.moveTo( pos2 *multiplier );
+  }
+  if (stepper3.distanceToGo() == 0){
+    int pos3 = (int) cmd_msg.position[4];
+    stepper3.moveTo( pos3 *multiplier );
+  }
+  if (stepper4.distanceToGo() == 0){
+    int pos4 = (int) cmd_msg.position[5];
+    stepper4.moveTo( pos4 *multiplier );
+  }
+  if (stepper5.distanceToGo() == 0){
+    int pos5 = (int) cmd_msg.position[6];
+    stepper5.moveTo( pos5 *multiplier );
+  }
+
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/joint_states", jointCallback );
 
 void setup(){
+  setupSteppers();
+
+  nh.getHardware()->setBaud(115200);
   nh.initNode();
   nh.subscribe(sub);
-  setupSteppers();
-  setupDistance();
+  while (!nh.connected()){
+    nh.spinOnce();
+  }
+  //setupDistance();
 }
 
 void loop()
 {
-
-  handleDistance();
+  // nh.loginfo("loop");
+  // if (stepper1.distanceToGo() == 0){
+  //   delay(500);
+  //   pos = -pos;
+  //   stepper1.moveTo(pos);
+  // }
+  //handleDistance();
   stepper1.run();
   stepper2.run();
   stepper3.run();
   stepper4.run();
   stepper5.run();
   nh.spinOnce();
+
 }
