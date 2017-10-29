@@ -1,5 +1,5 @@
-ARDUINO_LIBS = ros_lib NewPing RunningMedian Stepper
-BOARD_TAG     = nano328
-MONITOR_PORT  = /dev/ttyUSB0
-ARDUINO_SKETCHBOOK = /home/pi/ROS_Rover_addons/arduino
+ARDUINO_LIBS = AccelStepper
+BOARD_TAG     = mega2560
+MONITOR_PORT  = /dev/ttyACM0
+ARDUINO_SKETCHBOOK = ../../
 include /usr/share/arduino/Arduino.mk

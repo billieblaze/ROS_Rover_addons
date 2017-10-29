@@ -1,11 +1,8 @@
-
-/*
- * Button Example for Rosserial
- */
-
 #include <ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int16.h>
+#include <std_msgs/UInt16.h>
+#include <sensor_msgs/JointState.h>
 #include <sensor_msgs/Range.h>
 ros::NodeHandle nh;
 
@@ -45,34 +42,6 @@ sensor_msgs::Range range_msg;
 ros::Publisher pub_range( "/range_data", &range_msg);
 
 bool published_distance = true;
-
-// Stepper Config
-volatile int stepCount = 0;
-int maxSteps = 250 * 10;
-int endstopPin = A3;
-int directionPin = A4;
-int stepPin = A5;
-int initializingEndstop = 0;
-
-std_msgs::Int16 arm_position_msg;
-ros::Publisher pub_arm_position( "/arm/position", &arm_position_msg);
-
-
-// sensor
-void setupDigitalSensor(){
-  nh.advertise(pub_sensor);
-
-  //initialize an LED output pin
-  //and a input pin for our push button
-  pinMode(led_pin, OUTPUT);
-  pinMode(button_pin, INPUT);
-
-  //Enable the pullup resistor on the button
-  digitalWrite(button_pin, HIGH);
-
-  //The button is a normally button
-  last_reading = ! digitalRead(button_pin);
-}
 
 void handleSensor(){
   bool reading = ! digitalRead(button_pin);
@@ -158,102 +127,65 @@ void handleDistance(){
   }
 }
 
-// stepper
 
-void moveStepper(int steps) {
 
-  if (steps > 0){
-    digitalWrite(directionPin, LOW);
-  } else {
-    digitalWrite(directionPin, HIGH);
-  }
+#include <AccelStepper.h>
 
-  int targetSteps = stepCount + steps;
+// Define some steppers and the pins the will use
+AccelStepper stepper1(AccelStepper::DRIVER,30,31,32);
+AccelStepper stepper2(AccelStepper::DRIVER,36,37,38);
+AccelStepper stepper3(AccelStepper::DRIVER,33,34,35);
+AccelStepper stepper4(AccelStepper::DRIVER,39,40,41);
+AccelStepper stepper5(AccelStepper::DRIVER,42,43,44);
+int pos = 2000;
 
-  if ( maxSteps < targetSteps ) {
-    //Serial.println(maxSteps);
-    stepCount = maxSteps;
-    return;
-  }
+void setupSteppers(){
+  // wrist tilt
+  stepper1.setMaxSpeed(500.0);
+  stepper1.setAcceleration(3000.0);
 
-  if ( targetSteps < maxSteps || initializingEndstop == 1) {
-    //myStepper.step(steps);
-    for (int i = 0; i < abs(steps); i++){
-      digitalWrite(stepPin, LOW);
-      delay(1);
-      digitalWrite(stepPin, HIGH);
-      delay(1);
-    }
-    stepCount += steps;
-    //Serial.println(stepCount);
+  // wrist rotate
+  stepper2.setMaxSpeed(500.0);
+  stepper2.setAcceleration(3000.0);
+
+  // elbow
+  stepper3.setMaxSpeed(500.0);
+  stepper3.setAcceleration(3000.0);
+
+  // shoulder tilt
+  stepper4.setMaxSpeed(500.0);
+  stepper4.setAcceleration(3000.0);
+
+  // shoulder rotate
+  stepper5.setMaxSpeed(500.0);
+  stepper5.setAcceleration(3000.0);
+}
+
+void jointCallback( const sensor_msgs::JointState& cmd_msg ){
+  if (stepper1.distanceToGo() == 0){
+    delay(500);
+    pos = -pos;
+    stepper1.moveTo(pos);
   }
 }
 
-void setupStepper() {
-  initializingEndstop = 1;
-
-  // setup pins
-  pinMode(endstopPin, INPUT);           // set pin to input
-  digitalWrite(endstopPin, HIGH);       // turn on pullup resistors
-
-  pinMode(directionPin, OUTPUT);
-  pinMode(stepPin, OUTPUT);
-  digitalWrite(directionPin, HIGH);
-  digitalWrite(stepPin, LOW);
-
-  // until we hit the endstop, keep moving back
-  digitalWrite(13, HIGH);
-  while (digitalRead(endstopPin)) {
-    moveStepper(-100);
-  }
-  initializingEndstop = 0;
-  digitalWrite(13, LOW);
-  // hit it,  move off the endstop and reset the counter
-  delay(10);
-  moveStepper(100);
-  stepCount = 0;
-
-  // advertise the arm position publisher
-  nh.advertise(pub_arm_position);
-}
-
-void stepperCallback( const std_msgs::Int16& position){
-  // stepCount is current position
-
-  // map rc range to step range
-  int mapRcToPosition=(map(position.data,1065,1933,0,maxSteps));
-  // calculate different in requested position and target
-  int stepsToMove = 0;
-
-  if (mapRcToPosition < stepCount){
-    stepsToMove = - (stepCount - mapRcToPosition);
-  } else {
-    stepsToMove = mapRcToPosition - stepCount;
-  }
-
-  moveStepper(stepsToMove);
-
-  arm_position_msg.data = mapRcToPosition;
-  pub_arm_position.publish(&arm_position_msg);
-
-}
-
-ros::Subscriber<std_msgs::Int16> sub("/arm/move", &stepperCallback );
+ros::Subscriber<sensor_msgs::JointState> sub("/joint_states", jointCallback );
 
 void setup(){
-
   nh.initNode();
   nh.subscribe(sub);
-
-  // setupDigitalSensor();
+  setupSteppers();
   setupDistance();
-//  setupStepper();
 }
 
-void loop(){
+void loop()
+{
 
-  // handleSensor();
   handleDistance();
-
+  stepper1.run();
+  stepper2.run();
+  stepper3.run();
+  stepper4.run();
+  stepper5.run();
   nh.spinOnce();
 }
