@@ -164,7 +164,7 @@ void setupSteppers(){
 
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
-
+  nh.loginfo("cb");
 
   if (stepper1.distanceToGo() == 0){
     int multiplier = 64;
