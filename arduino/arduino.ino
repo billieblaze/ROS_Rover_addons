@@ -169,9 +169,11 @@ int convert_angle( int stepsPerRotation, double radians){
 }
 
 void moveStepper( AccelStepper stepper, int stepsPerRotation, int radians){
-  if (stepper.distanceToGo() == 0){
-    stepper.moveTo( convert_angle(stepsPerRotation, radians));
-  }
+//  if (stepper.distanceToGo() == 0){
+  int distance = convert_angle(stepsPerRotation, radians);
+  nh.loginfo(distance);
+    stepper.moveTo( distance );
+//  }
 }
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
