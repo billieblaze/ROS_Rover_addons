@@ -16,7 +16,7 @@
   </include>
 
   <node pkg="tf" type="static_transform_publisher" name="localmap_broadcaster" args="622150 3362350 0 0 0 0 1 /map /local_map 100" />
-  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /local_map /base_link 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /local_map /odom_combined 100" />
   <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 /odom_combined /base_link 100" />
 
   <!-- We do not have a robot connected, so publish fake joint states -->
@@ -35,7 +35,10 @@
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
-
+  <!-- <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen" respawn="true">
+    <param name="port" value="/dev/ttyACM1" />
+    <param name="baud" value="115200" />
+  </node> -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
   <!-- <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >

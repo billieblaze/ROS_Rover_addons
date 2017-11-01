@@ -10,20 +10,15 @@ import numpy as np
 
 s = serial.Serial('/dev/ttyACM0',250000)
 print 'Opening Serial Port - Success: {}'.format(s.is_open)
-# Wake up
-s.write("\r\n\r\n") # Hit enter a few times to wake the bot
-time.sleep(2)   # Wait for bot to initialize
-s.flushInput()  # Flush startup text in serial input
-s.write('G90\n')
-s.write('G92 X0 Y0 Z0\n')
-s.write('M82\n')
+
 # gcode_command = 'T1\nG0 E2 F50\n'
 # print(gcode_command)
 # s.write( gcode_command)
 
 def joint_handler(data):
+    print(data)
     joint_states = np.column_stack((data.name, data.position))
-    #print(data)
+
     # Stream g-code
     for joint in joint_states:
         joint_axis = ""
@@ -54,23 +49,37 @@ def joint_handler(data):
 
 
     s.write('T0\n')
-    gcode_command = 'G0 X{} Y{} Z{} E{} F200\n'.format(X_value, Y_value, Z_value, E0_value)
+    gcode_command = 'G0 X{} Y{} Z{} E{} F100\n'.format(X_value, Y_value, Z_value, E0_value)
     print(gcode_command)
     s.write( gcode_command)
-    print s.readline()
+    # print s.read()
     s.write( 'T1\n')
-    print s.readline()
-    s.write( 'G0 E{} F200\n'.format(E1_value))
-    print s.readline()
+    # print s.read()
+    s.write( 'G0 E{} F100\n'.format(E1_value))
+    # print s.read()
     return
 
 def listener():
+    # Wake up
+    s.write("\r\n\r\n") # Hit enter a few times to wake the bot
+    time.sleep(2)   # Wait for bot to initialize
+    s.flushInput()  # Flush startup text in serial input
+    s.write('G90\n')
+
+    s.write('G92 X0 Y0 Z0\n')
+    s.write('M82\n')
+    s.write('M121\n')
 
     rospy.init_node('arm', anonymous=True)
-    #rate = rospy.Rate(100) # 100hz
-    rospy.Subscriber("/move_group/fake_controller_joint_states", JointState, joint_handler)
+    rate = rospy.Rate(10) # 100hz
+
+    #rospy.Subscriber("/move_group/fake_controller_joint_states", JointState, joint_handler)
+    print 'handle it'
+
+    rospy.Subscriber("/joint_states", JointState, joint_handler)
 
     while not rospy.is_shutdown():
+        #rate.sleep()
         rospy.spin()
 
     # SHUTDOWN
