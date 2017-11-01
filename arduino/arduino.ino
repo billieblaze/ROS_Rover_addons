@@ -132,11 +132,11 @@ void handleDistance(){
 #include <AccelStepper.h>
 
 // Define some steppers and the pins the will use
-AccelStepper stepper1(AccelStepper::DRIVER,30,31,32);
-AccelStepper stepper2(AccelStepper::DRIVER,36,37,38);
+AccelStepper stepper5(AccelStepper::DRIVER,30,31,32);
+AccelStepper stepper4(AccelStepper::DRIVER,36,37,38);
 AccelStepper stepper3(AccelStepper::DRIVER,33,34,35);
-AccelStepper stepper4(AccelStepper::DRIVER,39,40,41);
-AccelStepper stepper5(AccelStepper::DRIVER,42,43,44);
+AccelStepper stepper2(AccelStepper::DRIVER,39,40,41);
+AccelStepper stepper1(AccelStepper::DRIVER,42,43,44);
 int pos = 2000;
 
 void setupSteppers(){
@@ -164,32 +164,41 @@ void setupSteppers(){
 
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
-  int multiplier = 100;
-nh.loginfo("loop");
+
+
   if (stepper1.distanceToGo() == 0){
+    int multiplier = 64;
     int pos1 = (int) cmd_msg.position[2];
     stepper1.moveTo( pos1 *multiplier );
   }
+
   if (stepper2.distanceToGo() == 0){
+    int multiplier = 64;
     int pos2 = (int) cmd_msg.position[3];
     stepper2.moveTo( pos2 *multiplier );
   }
-  if (stepper3.distanceToGo() == 0){
+
+  if (stepper3.distanceToGo
+    int multiplier = 64;() == 0){
     int pos3 = (int) cmd_msg.position[4];
     stepper3.moveTo( pos3 *multiplier );
   }
-  if (stepper4.distanceToGo() == 0){
+
+  if (stepper4.distanceToGo()
+    int multiplier = 64; == 0){
     int pos4 = (int) cmd_msg.position[5];
     stepper4.moveTo( pos4 *multiplier );
   }
+
   if (stepper5.distanceToGo() == 0){
+    int multiplier = 64;
     int pos5 = (int) cmd_msg.position[6];
     stepper5.moveTo( pos5 *multiplier );
   }
 
 }
 
-ros::Subscriber<sensor_msgs::JointState> sub("/joint_states", jointCallback );
+ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
 
 void setup(){
   setupSteppers();
