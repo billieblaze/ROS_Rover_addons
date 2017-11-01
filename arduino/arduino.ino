@@ -138,6 +138,8 @@ AccelStepper stepper3(AccelStepper::DRIVER,33,34,35);
 AccelStepper stepper2(AccelStepper::DRIVER,39,40,41);
 AccelStepper stepper1(AccelStepper::DRIVER,42,43,44);
 int pos = 2000;
+int joint_state[6];
+int prev_state[6];
 
 void setupSteppers(){
 
@@ -171,17 +173,23 @@ int convert_angle( int stepsPerRotation, double radians){
 void moveStepper( AccelStepper stepper, int stepsPerRotation, int radians){
 //  if (stepper.distanceToGo() == 0){
   int distance = convert_angle(stepsPerRotation, radians);
-  nh.loginfo(distance);
+  //nh.loginfo(distance);
     stepper.moveTo( distance );
 //  }
 }
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
-  moveStepper(stepper1, 3200, cmd_msg.position[2]);
-  moveStepper(stepper2, 3200, cmd_msg.position[3]);
-  moveStepper(stepper3, 3200, cmd_msg.position[4]);
-  moveStepper(stepper4, 3200, cmd_msg.position[5]);
-  moveStepper(stepper5, 3200, cmd_msg.position[6]);
+  prev_state[0] = joint_state[0];
+  prev_state[1] = joint_state[1];
+  prev_state[2] = joint_state[2];
+  prev_state[3] = joint_state[3];
+  prev_state[4] = joint_state[4];
+
+  joint_state[0] = cmd_msg.postition[2];
+  joint_state[1] = cmd_msg.postition[3];
+  joint_state[2] = cmd_msg.postition[4];
+  joint_state[3] = cmd_msg.postition[5];
+  joint_state[4] = cmd_msg.postition[6];
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
@@ -201,11 +209,9 @@ void setup(){
 void loop()
 {
   // nh.loginfo("loop");
-  // if (stepper1.distanceToGo() == 0){
-  //   delay(500);
-  //   pos = -pos;
-  //   stepper1.moveTo(pos);
-  // }
+  if (joint_state[0] != prev_state[0]){
+     moveStepper(stepper1, 3200, joint_state[0]);
+  }
   //handleDistance();
   stepper1.run();
   stepper2.run();
