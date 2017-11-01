@@ -165,31 +165,32 @@ void setupSteppers(){
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
   int multiplier = 100;
-nh.loginfo("loop");
+nh.loginfo("cb");
+
   if (stepper1.distanceToGo() == 0){
-    int pos1 = (int) cmd_msg.position[2];
-    stepper1.moveTo( pos1 *multiplier );
+    int pos1 = (int) (cmd_msg.position[2] * multiplier);
+    stepper1.moveTo( pos1 );
   }
   if (stepper2.distanceToGo() == 0){
-    int pos2 = (int) cmd_msg.position[3];
-    stepper2.moveTo( pos2 *multiplier );
+    int pos2 = (int) (cmd_msg.position[3] * multiplier);
+    stepper2.moveTo( pos2 );
   }
   if (stepper3.distanceToGo() == 0){
-    int pos3 = (int) cmd_msg.position[4];
-    stepper3.moveTo( pos3 *multiplier );
+    int pos3 = (int) (cmd_msg.position[4] * multiplier);
+    stepper3.moveTo( pos3 );
   }
   if (stepper4.distanceToGo() == 0){
-    int pos4 = (int) cmd_msg.position[5];
-    stepper4.moveTo( pos4 *multiplier );
+    int pos4 = (int) (cmd_msg.position[5] * multiplier);
+    stepper4.moveTo( pos4 );
   }
   if (stepper5.distanceToGo() == 0){
-    int pos5 = (int) cmd_msg.position[6];
-    stepper5.moveTo( pos5 *multiplier );
+    int pos5 = (int) (cmd_msg.position[6] * multiplier);
+    stepper5.moveTo( pos5 );
   }
 
 }
 
-ros::Subscriber<sensor_msgs::JointState> sub("/joint_states", jointCallback );
+ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
 
 void setup(){
   setupSteppers();
@@ -220,3 +221,4 @@ void loop()
   nh.spinOnce();
 
 }
+
