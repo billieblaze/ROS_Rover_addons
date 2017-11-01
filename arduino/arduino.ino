@@ -168,31 +168,31 @@ void jointCallback( const sensor_msgs::JointState& cmd_msg ){
 
   if (stepper1.distanceToGo() == 0){
     int multiplier = 64;
-    int pos1 = (int) cmd_msg.position[2];
+    int pos1 = (int) (cmd_msg.position[2]*1000);
     stepper1.moveTo( pos1 *multiplier );
   }
 
   if (stepper2.distanceToGo() == 0){
     int multiplier = 64;
-    int pos2 = (int) cmd_msg.position[3];
+    int pos2 = (int) (cmd_msg.position[3]*1000);
     stepper2.moveTo( pos2 *multiplier );
   }
 
   if (stepper3.distanceToGo
     int multiplier = 64;() == 0){
-    int pos3 = (int) cmd_msg.position[4];
+    int pos3 = (int) (cmd_msg.position[4]*1000);
     stepper3.moveTo( pos3 *multiplier );
   }
 
   if (stepper4.distanceToGo()
     int multiplier = 64; == 0){
-    int pos4 = (int) cmd_msg.position[5];
+    int pos4 = (int) (cmd_msg.position[5]*1000);
     stepper4.moveTo( pos4 *multiplier );
   }
 
   if (stepper5.distanceToGo() == 0){
     int multiplier = 64;
-    int pos5 = (int) cmd_msg.position[6];
+    int pos5 = (int) (cmd_msg.position[6]*1000);
     stepper5.moveTo( pos5 *multiplier );
   }
 
