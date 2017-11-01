@@ -162,32 +162,26 @@ void setupSteppers(){
   stepper5.setAcceleration(3000.0);
 }
 
+int convert_angle( int stepsPerRotation, double radians){
+  float y;
+  y=((radians / M_PI)*stepsPerRotation)+0.5;
+  return y*49;
+}
+
+void moveStepper( AccelStepper stepper, int stepsPerRotation, int radians){
+//  if (stepper.distanceToGo() == 0){
+  int distance = convert_angle(stepsPerRotation, radians);
+  nh.loginfo(distance);
+    stepper.moveTo( distance );
+//  }
+}
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
-  int multiplier = 100;
-nh.loginfo("cb");
-
-  if (stepper1.distanceToGo() == 0){
-    int pos1 = (int) (cmd_msg.position[2] * multiplier);
-    stepper1.moveTo( pos1 );
-  }
-  if (stepper2.distanceToGo() == 0){
-    int pos2 = (int) (cmd_msg.position[3] * multiplier);
-    stepper2.moveTo( pos2 );
-  }
-  if (stepper3.distanceToGo() == 0){
-    int pos3 = (int) (cmd_msg.position[4] * multiplier);
-    stepper3.moveTo( pos3 );
-  }
-  if (stepper4.distanceToGo() == 0){
-    int pos4 = (int) (cmd_msg.position[5] * multiplier);
-    stepper4.moveTo( pos4 );
-  }
-  if (stepper5.distanceToGo() == 0){
-    int pos5 = (int) (cmd_msg.position[6] * multiplier);
-    stepper5.moveTo( pos5 );
-  }
-
+  moveStepper(stepper1, 3200, cmd_msg.position[2]);
+  moveStepper(stepper2, 3200, cmd_msg.position[3]);
+  moveStepper(stepper3, 3200, cmd_msg.position[4]);
+  moveStepper(stepper4, 3200, cmd_msg.position[5]);
+  moveStepper(stepper5, 3200, cmd_msg.position[6]);
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
