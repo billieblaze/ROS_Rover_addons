@@ -141,31 +141,20 @@ AccelStepper stepper2(AccelStepper::DRIVER,42,43,44); // shoulder rotate
 
 MultiStepper steppers;
 
-
-int pos = 2000;
 long joint_state[5];
 long prev_state[5];
 
 void setupSteppers(){
-  nh.loginfo("Setup steppers");
-  // wrist tilt
-  stepper1.setMaxSpeed(200.0);
+  //nh.loginfo("Setup steppers");
+  stepper1.setMaxSpeed(500.0);
   stepper1.setAcceleration(3000.0);
-
-  // wrist rotate
-  stepper2.setMaxSpeed(200.0);
+  stepper2.setMaxSpeed(500.0);
   stepper2.setAcceleration(3000.0);
-
-  // elbow
-  stepper3.setMaxSpeed(200.0);
+  stepper3.setMaxSpeed(500.0);
   stepper3.setAcceleration(3000.0);
-
-  // shoulder tilt
-  stepper4.setMaxSpeed(200.0);
+  stepper4.setMaxSpeed(500.0);
   stepper4.setAcceleration(3000.0);
-
-  // shoulder rotate
-  stepper5.setMaxSpeed(200.0);
+  stepper5.setMaxSpeed(500.0);
   stepper5.setAcceleration(3000.0);
 
   steppers.addStepper(stepper1);
@@ -184,22 +173,22 @@ int convert_angle( int stepsPerRotation, double radians){
 void moveSteppers(){
   if (prev_state[0] != joint_state[0] || prev_state[1] != joint_state[1] || prev_state[2] != joint_state[2] || prev_state[3] != joint_state[3] || prev_state[4] != joint_state[4]){
     steppers.moveTo(joint_state);
-    prev_state[0]=joint_state[0];
-    prev_state[1]=joint_state[1];
-    prev_state[2]=joint_state[2];
-    prev_state[3]=joint_state[3];
-    prev_state[4]=joint_state[4];
+    prev_state[0]=joint_state[0]; //E
+    prev_state[1]=joint_state[1]; //SR
+    prev_state[2]=joint_state[2]; //ST
+    prev_state[3]=joint_state[3]; //WR
+    prev_state[4]=joint_state[4]; //WT
   }
-  steppers.run();
+  steppers.runSpeedToPosition();
 }
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
   // nh.loginfo("callback");
-  joint_state[0] = convert_angle(400, cmd_msg.position[0]) - prev_state[0];
-  joint_state[1] = convert_angle(400, cmd_msg.position[1]) - prev_state[1];
-  joint_state[2] = convert_angle(400, cmd_msg.position[2]) - prev_state[2];
-  joint_state[3] = convert_angle(400, cmd_msg.position[3]) - prev_state[3];
-  joint_state[4] = convert_angle(400, cmd_msg.position[4]) - prev_state[4];
+  joint_state[0] = convert_angle(64, cmd_msg.position[0]);
+  joint_state[1] = convert_angle(633, cmd_msg.position[1]);
+  joint_state[2] = convert_angle(171, cmd_msg.position[2]);
+  joint_state[3] = convert_angle(3200, cmd_msg.position[3]);
+  joint_state[4] = convert_angle(633, cmd_msg.position[4]);
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
