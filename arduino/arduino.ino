@@ -171,16 +171,19 @@ int convert_angle( int stepsPerRotation, double radians){
 }
 
 void moveStepper( AccelStepper stepper, int stepsPerRotation, int pointer){
-  if (joint_state[pointer] != prev_state[pointer]){
+  if (prev_state[pointer] != joint_state[pointer]){
     int distance = convert_angle(stepsPerRotation, joint_state[pointer]);
     stepper.moveTo( distance );
     prev_state[pointer] = joint_state[pointer];
+
+    sprintf(log_buffer, "axis %d - %d", pointer, joint_state[pointer]);
+    nh.loginfo(log_buffer);
   }
   stepper.run();
 }
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
-  nh.loginfo("callback");
+  // nh.loginfo("callback");
   joint_state[0] = cmd_msg.position[0];
   joint_state[1] = cmd_msg.position[1];
   joint_state[2] = cmd_msg.position[2];
