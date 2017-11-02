@@ -128,7 +128,7 @@ void handleDistance(){
 }
 
 
-
+char log_buffer[50];
 #include <AccelStepper.h>
 
 // Define some steppers and the pins the will use
@@ -142,7 +142,7 @@ int joint_state[6];
 int prev_state[6];
 
 void setupSteppers(){
-
+  nh.loginfo("Setup steppers");
   // wrist tilt
   stepper1.setMaxSpeed(500.0);
   stepper1.setAcceleration(3000.0);
@@ -171,14 +171,12 @@ int convert_angle( int stepsPerRotation, double radians){
 }
 
 void moveStepper( AccelStepper stepper, int stepsPerRotation, int radians){
-//  if (stepper.distanceToGo() == 0){
   int distance = convert_angle(stepsPerRotation, radians);
-  //nh.loginfo(distance);
-    stepper.moveTo( distance );
-//  }
+  stepper.moveTo( distance );
 }
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
+  nh.loginfo("callback");
   prev_state[0] = joint_state[0];
   prev_state[1] = joint_state[1];
   prev_state[2] = joint_state[2];
@@ -205,15 +203,16 @@ void setup(){
   }
   //setupDistance();
 }
-char log_buffer[50];
+
 
 void loop()
 {
   // nh.loginfo("loop");
   if (joint_state[0] != prev_state[0]){
-     moveStepper(stepper1, 3200, joint_state[0]);
-     sprintf(log_buffer,"s1: %d", joint_state[0]);
-     nh.loginfo(log_buffer);
+    nh.loginfo("J1 state changed");
+    moveStepper(stepper1, 400, joint_state[0]);
+    sprintf(log_buffer,"s1: %d", joint_state[0]);
+    nh.loginfo(log_buffer);
   }
   //handleDistance();
   stepper1.run();
