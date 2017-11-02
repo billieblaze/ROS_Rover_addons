@@ -130,6 +130,7 @@ void handleDistance(){
 
 char log_buffer[50];
 #include <AccelStepper.h>
+#include <MultiStepper.h>
 
 // Define some steppers and the pins the will use
 AccelStepper stepper5(AccelStepper::DRIVER,30,31,32); // wrist tilt
@@ -137,6 +138,8 @@ AccelStepper stepper4(AccelStepper::DRIVER,36,37,38); // wrist rotate
 AccelStepper stepper1(AccelStepper::DRIVER,33,34,35); // elbow
 AccelStepper stepper3(AccelStepper::DRIVER,39,40,41); // shoulder tilt
 AccelStepper stepper2(AccelStepper::DRIVER,42,43,44); // shoulder rotate
+
+MultiStepper steppers;
 
 
 int pos = 2000;
@@ -146,24 +149,30 @@ int prev_state[6];
 void setupSteppers(){
   nh.loginfo("Setup steppers");
   // wrist tilt
-  stepper1.setMaxSpeed(500.0);
+  stepper1.setMaxSpeed(200.0);
   stepper1.setAcceleration(3000.0);
 
   // wrist rotate
-  stepper2.setMaxSpeed(500.0);
+  stepper2.setMaxSpeed(200.0);
   stepper2.setAcceleration(3000.0);
 
   // elbow
-  stepper3.setMaxSpeed(500.0);
+  stepper3.setMaxSpeed(200.0);
   stepper3.setAcceleration(3000.0);
 
   // shoulder tilt
-  stepper4.setMaxSpeed(500.0);
+  stepper4.setMaxSpeed(200.0);
   stepper4.setAcceleration(3000.0);
 
   // shoulder rotate
-  stepper5.setMaxSpeed(500.0);
+  stepper5.setMaxSpeed(200.0);
   stepper5.setAcceleration(3000.0);
+
+  steppers.addSteppers(stepper1);
+  steppers.addSteppers(stepper2);
+  steppers.addSteppers(stepper3);
+  steppers.addSteppers(stepper4);
+  steppers.addSteppers(stepper5);
 }
 
 int convert_angle( int stepsPerRotation, double radians){
@@ -172,24 +181,21 @@ int convert_angle( int stepsPerRotation, double radians){
   return y*49;
 }
 
-void moveStepper( AccelStepper stepper, int pointer){
+void moveSteppers(){
   if (prev_state[pointer] != joint_state[pointer]){
-    stepper.moveTo( joint_state[pointer] );
-    prev_state[pointer] = joint_state[pointer];
-
-    // sprintf(log_buffer, "axis %d - %d", pointer, joint_state[pointer]);
-    // nh.loginfo(log_buffer);
+    steppers.moveTo(joint_state);
+    steppers.runSpeedToPosition();
+    prev_state=joint_state;
   }
-  stepper.run();
 }
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
   // nh.loginfo("callback");
-  joint_state[0] = convert_angle(3200, cmd_msg.position[0]);
-  // joint_state[1] = convert_angle(3200, cmd_msg.position[1]);
-  // joint_state[2] = convert_angle(3200, cmd_msg.position[2]);
-  // joint_state[3] = convert_angle(3200, cmd_msg.position[3]);
-  // joint_state[4] = convert_angle(3200, cmd_msg.position[4]);
+  joint_state[0] = convert_angle(400, cmd_msg.position[0]);
+  joint_state[1] = convert_angle(400, cmd_msg.position[1]);
+  joint_state[2] = convert_angle(400, cmd_msg.position[2]);
+  joint_state[3] = convert_angle(400, cmd_msg.position[3]);
+  joint_state[4] = convert_angle(400, cmd_msg.position[4]);
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
@@ -210,12 +216,6 @@ void setup(){
 
 void loop()
 {
-    moveStepper(stepper1, 0);
-    // moveStepper(stepper2, 1);
-    // moveStepper(stepper3, 2);
-    // moveStepper(stepper4, 3);
-    // moveStepper(stepper5, 4);
-
+    moveSteppers();
     nh.spinOnce();
-
 }
