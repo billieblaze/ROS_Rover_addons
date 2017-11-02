@@ -205,12 +205,15 @@ void setup(){
   }
   //setupDistance();
 }
+char log_buffer[50];
 
 void loop()
 {
   // nh.loginfo("loop");
   if (joint_state[0] != prev_state[0]){
      moveStepper(stepper1, 3200, joint_state[0]);
+     sprintf(log_buffer,"s1: %d", joint_state[0]);
+     nh.loginfo(log_buffer);
   }
   //handleDistance();
   stepper1.run();
