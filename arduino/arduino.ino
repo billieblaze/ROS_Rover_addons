@@ -143,8 +143,8 @@ MultiStepper steppers;
 
 
 int pos = 2000;
-int joint_state[5];
-int prev_state[5];
+long joint_state[5];
+long prev_state[5];
 
 void setupSteppers(){
   nh.loginfo("Setup steppers");
