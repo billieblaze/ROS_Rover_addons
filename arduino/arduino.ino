@@ -211,8 +211,22 @@ void loop()
   if (joint_state[0] != prev_state[0]){
     nh.loginfo("J1 state changed");
     moveStepper(stepper1, 400, joint_state[0]);
-    sprintf(log_buffer,"s1: %d", joint_state[0]);
-    nh.loginfo(log_buffer);
+  }
+  if (joint_state[1] != prev_state[1]){
+    nh.loginfo("J2 state changed");
+    moveStepper(stepper2, 400, joint_state[1]);
+  }
+  if (joint_state[2] != prev_state[2]){
+    nh.loginfo("J3 state changed");
+    moveStepper(stepper3, 400, joint_state[2]);
+  }
+  if (joint_state[3] != prev_state[3]){
+    nh.loginfo("J4 state changed");
+    moveStepper(stepper4, 400, joint_state[3]);
+  }
+  if (joint_state[4] != prev_state[4]){
+    nh.loginfo("J5 state changed");
+    moveStepper(stepper5, 400, joint_state[4]);
   }
   //handleDistance();
   stepper1.run();
