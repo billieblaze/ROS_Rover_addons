@@ -168,11 +168,11 @@ void setupSteppers(){
   stepper5.setMaxSpeed(200.0);
   stepper5.setAcceleration(3000.0);
 
-  steppers.addSteppers(stepper1);
-  steppers.addSteppers(stepper2);
-  steppers.addSteppers(stepper3);
-  steppers.addSteppers(stepper4);
-  steppers.addSteppers(stepper5);
+  steppers.addStepper(stepper1);
+  steppers.addStepper(stepper2);
+  steppers.addStepper(stepper3);
+  steppers.addStepper(stepper4);
+  steppers.addStepper(stepper5);
 }
 
 int convert_angle( int stepsPerRotation, double radians){
