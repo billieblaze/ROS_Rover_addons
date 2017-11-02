@@ -132,11 +132,13 @@ char log_buffer[50];
 #include <AccelStepper.h>
 
 // Define some steppers and the pins the will use
-AccelStepper stepper1(AccelStepper::DRIVER,30,31,32);
-AccelStepper stepper2(AccelStepper::DRIVER,36,37,38);
-AccelStepper stepper3(AccelStepper::DRIVER,33,34,35);
-AccelStepper stepper4(AccelStepper::DRIVER,39,40,41);
-AccelStepper stepper5(AccelStepper::DRIVER,42,43,44);
+AccelStepper stepper5(AccelStepper::DRIVER,30,31,32); // wrist tilt
+AccelStepper stepper4(AccelStepper::DRIVER,36,37,38); // wrist rotate
+AccelStepper stepper1(AccelStepper::DRIVER,33,34,35); // elbow
+AccelStepper stepper3(AccelStepper::DRIVER,39,40,41); // shoulder tilt
+AccelStepper stepper2(AccelStepper::DRIVER,42,43,44); // shoulder rotate
+
+
 int pos = 2000;
 int joint_state[6];
 int prev_state[6];
