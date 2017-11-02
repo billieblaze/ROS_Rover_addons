@@ -183,11 +183,11 @@ void jointCallback( const sensor_msgs::JointState& cmd_msg ){
   prev_state[3] = joint_state[3];
   prev_state[4] = joint_state[4];
 
-  joint_state[0] = cmd_msg.position[2];
-  joint_state[1] = cmd_msg.position[3];
-  joint_state[2] = cmd_msg.position[4];
-  joint_state[3] = cmd_msg.position[5];
-  joint_state[4] = cmd_msg.position[6];
+  joint_state[0] = cmd_msg.position[0];
+  joint_state[1] = cmd_msg.position[1];
+  joint_state[2] = cmd_msg.position[2];
+  joint_state[3] = cmd_msg.position[3];
+  joint_state[4] = cmd_msg.position[4];
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
