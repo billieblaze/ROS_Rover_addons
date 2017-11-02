@@ -170,10 +170,9 @@ int convert_angle( int stepsPerRotation, double radians){
   return y*49;
 }
 
-void moveStepper( AccelStepper stepper, int stepsPerRotation, int pointer){
+void moveStepper( AccelStepper stepper, int pointer){
   if (prev_state[pointer] != joint_state[pointer]){
-    int distance = convert_angle(stepsPerRotation, joint_state[pointer]);
-    stepper.moveTo( distance );
+    stepper.moveTo( joint_state[pointer] );
     prev_state[pointer] = joint_state[pointer];
 
     sprintf(log_buffer, "axis %d - %d", pointer, joint_state[pointer]);
@@ -184,11 +183,11 @@ void moveStepper( AccelStepper stepper, int stepsPerRotation, int pointer){
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
   // nh.loginfo("callback");
-  joint_state[0] = cmd_msg.position[0];
-  joint_state[1] = cmd_msg.position[1];
-  joint_state[2] = cmd_msg.position[2];
-  joint_state[3] = cmd_msg.position[3];
-  joint_state[4] = cmd_msg.position[4];
+  joint_state[0] = convert_angle(400, cmd_msg.position[0]);
+  joint_state[1] = convert_angle(400, cmd_msg.position[1]);
+  joint_state[2] = convert_angle(400, cmd_msg.position[2]);
+  joint_state[3] = convert_angle(400, cmd_msg.position[3]);
+  joint_state[4] = convert_angle(400, cmd_msg.position[4]);
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
@@ -209,11 +208,11 @@ void setup(){
 
 void loop()
 {
-    moveStepper(stepper1, 400, 0);
-    moveStepper(stepper2, 400, 1);
-    moveStepper(stepper3, 400, 2);
-    moveStepper(stepper4, 400, 3);
-    moveStepper(stepper5, 400, 4);
+    moveStepper(stepper1, 0);
+    moveStepper(stepper2, 1);
+    moveStepper(stepper3, 2);
+    moveStepper(stepper4, 3);
+    moveStepper(stepper5, 4);
 
     nh.spinOnce();
 
