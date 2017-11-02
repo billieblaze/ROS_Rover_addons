@@ -187,7 +187,7 @@ void jointCallback( const sensor_msgs::JointState& cmd_msg ){
   joint_state[0] = -convert_angle(106, cmd_msg.position[0]);
   joint_state[1] = convert_angle(854, cmd_msg.position[1]);
   joint_state[2] = -convert_angle(560, cmd_msg.position[2]);
-  joint_state[3] = convert_angle(200, cmd_msg.position[3]);
+  joint_state[3] = -convert_angle(100, cmd_msg.position[3]);
   joint_state[4] = -convert_angle(140, cmd_msg.position[4]);
 }
 
