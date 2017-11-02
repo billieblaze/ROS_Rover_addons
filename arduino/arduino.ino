@@ -185,11 +185,11 @@ void moveStepper( AccelStepper stepper, int pointer){
 
 void jointCallback( const sensor_msgs::JointState& cmd_msg ){
   // nh.loginfo("callback");
-  joint_state[0] = convert_angle(400, cmd_msg.position[0]);
-  joint_state[1] = convert_angle(400, cmd_msg.position[1]);
-  joint_state[2] = convert_angle(400, cmd_msg.position[2]);
-  joint_state[3] = convert_angle(400, cmd_msg.position[3]);
-  joint_state[4] = convert_angle(400, cmd_msg.position[4]);
+  joint_state[0] = convert_angle(3200, cmd_msg.position[0]);
+  joint_state[1] = convert_angle(3200, cmd_msg.position[1]);
+  joint_state[2] = convert_angle(3200, cmd_msg.position[2]);
+  joint_state[3] = convert_angle(3200, cmd_msg.position[3]);
+  joint_state[4] = convert_angle(3200, cmd_msg.position[4]);
 }
 
 ros::Subscriber<sensor_msgs::JointState> sub("/move_group/fake_controller_joint_states", jointCallback );
