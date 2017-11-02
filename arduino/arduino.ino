@@ -184,7 +184,7 @@ int convert_angle( int stepsPerRotation, double radians){
 void moveSteppers(){
   if (prev_state[0] != joint_state[0] || prev_state[1] != joint_state[1] || prev_state[2] != joint_state[2] || prev_state[3] != joint_state[3] || prev_state[4] != joint_state[4]){
     steppers.moveTo(joint_state);
-    steppers.runSpeedToPosition();
+    //steppers.runSpeedToPosition();
     prev_state[0]=joint_state[0];
     prev_state[1]=joint_state[1];
     prev_state[2]=joint_state[2];
