@@ -1,64 +1,55 @@
 <launch>
 
-  <arg name="model" default="$(find rover)/tank_arm_model.urdf"/>
+  <arg name="model" default="$(find rover)/tank_model.urdf"/>
   <arg name="gui" default="true" />
   <arg name="rvizconfig" default="$(find rover)/rover.rviz" />
   <arg name="osm_url" default="file:///home/bblaze/Desktop/north-carolina-latest.osm" />
 
   <arg name="debug" default="false" />
 
-  <param name="robot_description" command="$(find xacro)/xacro.py $(find rover)/tank_arm_model.urdf" />
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find rover)/tank_model.urdf" />
   <param name="use_gui" value="$(arg gui)"/>
 
+    <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+
+    <param name="/use_sim_time" value="false"/>
+
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
-  <include file="$(find moveit)/launch/planning_context.launch">
+  <!-- <include file="$(find moveit)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
 
   <node pkg="tf" type="static_transform_publisher" name="localmap_broadcaster" args="622150 3362350 0 0 0 0 1 /map /local_map 100" />
   <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /local_map /odom_combined 100" />
-  <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 /odom_combined /base_link 100" />
+  <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 /odom_combined /base_link 100" /> -->
 
   <!-- We do not have a robot connected, so publish fake joint states -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="$(arg gui)"/>
     <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
-  </node>
+  </node> -->
 
   <!-- Given the published joint states, publish tf for the robot links -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" /> -->
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
-  <include file="$(find moveit)/launch/move_group.launch">
+  <!-- <include file="$(find moveit)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="true"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
-  </include>
+  </include> -->
   <!-- <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen" respawn="true">
     <param name="port" value="/dev/ttyACM1" />
     <param name="baud" value="115200" />
   </node> -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
-  <!-- <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
-    <param name="video_device" value="/dev/video0" />
-    <param name="image_width" value="720" />
-    <param name="image_height" value="480" />
-    <param name="pixel_format" value="yuyv" />
-    <param name="camera_frame_id" value="camera" />
-    <param name="io_method" value="mmap"/>
-  </node>-->
-  <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot2" args="/mavros/battery"/> -->
+  <include file="$(find hector_mapping)/launch/mapping_default.launch"/>
 
-  <!-- Publishes the voxel grid to rviz for display -->
-  <!-- <node pkg="costmap_2d" type="costmap_2d_markers" name="voxel_visualizer">
-    <remap from="voxel_grid" to="costmap/voxel_grid"/>
-  </node> -->
-
-  <!-- Run the costmap node -->
-  <!-- <node name="costmap_node" pkg="costmap_2d" type="costmap_2d_node" >
-    <rosparam file="$(find rover)/launch/params.yml" command="load" ns="costmap" />
-  </node> -->
+  <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
+    <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
+    <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
+  </include>
 
 </launch>

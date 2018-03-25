@@ -1,0 +1,100 @@
+<robot name="pi_robot">
+
+	<!-- * * * Link Definitions * * * -->
+
+ 	<link name="base_link">
+		<visual>
+		    <origin xyz="0 0 0.19" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.61 0.43 0.01"/>
+			</geometry>
+			<material name="Black1">
+	       		<color rgba="0 0 0 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+  <link name="enclosure_link">
+    <visual>
+        <origin xyz="-0.23 0 0.3" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3 0.43 0.24"/>
+      </geometry>
+      <material name="Black1">
+            <color rgba="0 0 0 1.0"/>
+        </material>
+    </visual>
+  </link>
+
+	<link name="left_track_link">
+		<visual>
+		    <origin xyz="0 0.25 0.05" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.61 0.07 0.23"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+  <link name="left_track_drive_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="1.57 0 0"/>
+			<geometry>
+				<cylinder radius="0.115" length="0.01"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+	<link name="right_track_link">
+		<visual>
+		    <origin xyz="0 -0.25 0.05" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.61 0.07 0.23"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+  <link name="right_track_drive_link">
+		<visual>
+		    <origin xyz="0 0 0" rpy="1.57 0 0"/>
+			<geometry>
+				<cylinder radius="0.115" length="0.01"/>
+			</geometry>
+			<material name="Blue1">
+	       		<color rgba="0 0 0.9 1.0"/>
+	     	</material>
+		</visual>
+	</link>
+
+  <joint name="enclosure_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="enclosure_link"/>
+  </joint>
+
+  <joint name="left_track_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_track_link"/>
+  </joint>
+  <joint name="left_track_drive_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_track_drive_link"/>
+    <axis xyz="0 1 0"/>
+<origin xyz="0 0.3 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="right_track_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_track_link"/>
+  </joint>
+  <joint name="right_track_drive_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_track_drive_link"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 -0.3 0.05" rpy="0 0 0"/>
+  </joint>
+
+</robot>
