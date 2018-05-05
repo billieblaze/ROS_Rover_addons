@@ -111,41 +111,13 @@
     <arg if="$(arg compressed)"     name="left_image_topic_relay"    default="$(arg left_image_topic)_relay"/>
     <arg unless="$(arg compressed)" name="left_image_topic_relay"    default="$(arg left_image_topic)"/>
     <arg if="$(arg compressed)"     name="right_image_topic_relay"   default="$(arg right_image_topic)_relay"/>
+
     <arg unless="$(arg compressed)" name="right_image_topic_relay"   default="$(arg right_image_topic)"/>
-
-  <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
-  <!-- <include file="$(find moveit)/launch/planning_context.launch">
-    <arg name="load_robot_description" value="true"/>
-  </include>
-
-  <node pkg="tf" type="static_transform_publisher" name="localmap_broadcaster" args="622150 3362350 0 0 0 0 1 /map /local_map 100" />
-  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /local_map /odom_combined 100" />
-  <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 /odom_combined /base_link 100" /> -->
-
-  <!-- We do not have a robot connected, so publish fake joint states -->
-  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="$(arg gui)"/>
-    <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
-  </node> -->
-
-  <!-- Given the published joint states, publish tf for the robot links -->
-  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" /> -->
-
-  <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
-  <!-- <include file="$(find moveit)/launch/move_group.launch">
-    <arg name="allow_trajectory_execution" value="true"/>
-    <arg name="fake_execution" value="true"/>
-    <arg name="info" value="true"/>
-    <arg name="debug" value="$(arg debug)"/>
-  </include> -->
-  <!-- <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen" respawn="true">
-    <param name="port" value="/dev/ttyACM1" />
-    <param name="baud" value="115200" />
-  </node> -->
-  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" /> -->
   <!-- Nodes -->
+
+  <include file="$(find openni2_launch)/launch/openni2.launch"/>
+
   <group ns="$(arg namespace)">
-<include file="$(find openni2_launch)/launch/openni2.launch"/>
     <!-- relays -->
     <group unless="$(arg stereo)">
       <node if="$(arg compressed)" name="republish_rgb" type="republish" pkg="image_transport" args="$(arg rgb_image_transport) in:=$(arg rgb_topic) raw out:=$(arg rgb_topic_relay)" />
@@ -161,20 +133,6 @@
         <param name="depth_scale"     type="double" value="$(arg depth_scale)"/>
       </node>
     </group>
-    <group if="$(arg stereo)">
-      <node if="$(arg compressed)" name="republish_left"  type="republish" pkg="image_transport" args="compressed in:=$(arg left_image_topic) raw out:=$(arg left_image_topic_relay)" />
-      <node if="$(arg compressed)" name="republish_right" type="republish" pkg="image_transport" args="compressed in:=$(arg right_image_topic) raw out:=$(arg right_image_topic_relay)" />
-
-      <node if="$(arg rgbd_sync)" pkg="nodelet" type="nodelet" name="rgbd_sync" args="standalone rtabmap_ros/stereo_sync" output="$(arg output)">
-        <remap from="left/image_rect"   to="$(arg left_image_topic)"/>
-        <remap from="right/image_rect"  to="$(arg right_image_topic)"/>
-        <remap from="left/camera_info"  to="$(arg left_camera_info_topic)"/>
-        <remap from="right/camera_info" to="$(arg right_camera_info_topic)"/>
-        <remap from="rgbd_image"      to="$(arg rgbd_topic)"/>
-        <param name="approx_sync"     type="bool"   value="$(arg approx_rgbd_sync)"/>
-        <param name="queue_size"      type="int"    value="$(arg queue_size)"/>
-    </node>
-    </group>
 
     <!-- Visual odometry -->
     <group unless="$(arg icp_odometry)">
@@ -187,29 +145,6 @@
           <remap from="rgb/camera_info" to="$(arg camera_info_topic)"/>
           <remap from="rgbd_image"      to="$(arg rgbd_topic)"/>
           <remap from="odom"            to="$(arg odom_topic)"/>
-
-          <param name="frame_id"                    type="string" value="$(arg frame_id)"/>
-          <param name="odom_frame_id"               type="string" value="$(arg vo_frame_id)"/>
-          <param name="ground_truth_frame_id"       type="string" value="$(arg ground_truth_frame_id)"/>
-          <param name="ground_truth_base_frame_id"  type="string" value="$(arg ground_truth_base_frame_id)"/>
-          <param name="wait_for_transform_duration" type="double" value="$(arg wait_for_transform)"/>
-          <param name="approx_sync"                 type="bool"   value="$(arg approx_sync)"/>
-          <param name="config_path"                 type="string" value="$(arg cfg)"/>
-          <param name="queue_size"                  type="int"    value="$(arg queue_size)"/>
-          <param name="subscribe_rgbd"              type="bool"   value="$(arg subscribe_rgbd)"/>
-          <param name="guess_frame_id"              type="string" value="$(arg odom_guess_frame_id)"/>
-          <param name="guess_min_translation"       type="double" value="$(arg odom_guess_min_translation)"/>
-          <param name="guess_min_rotation"          type="double" value="$(arg odom_guess_min_rotation)"/>
-        </node>
-
-        <!-- Stereo Odometry -->
-        <node if="$(arg stereo)" pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="$(arg output)" args="$(arg rtabmap_args) $(arg odom_args)" launch-prefix="$(arg launch_prefix)">
-          <remap from="left/image_rect"        to="$(arg left_image_topic_relay)"/>
-          <remap from="right/image_rect"       to="$(arg right_image_topic_relay)"/>
-          <remap from="left/camera_info"       to="$(arg left_camera_info_topic)"/>
-          <remap from="right/camera_info"      to="$(arg right_camera_info_topic)"/>
-          <remap from="rgbd_image"             to="$(arg rgbd_topic)"/>
-          <remap from="odom"                   to="$(arg odom_topic)"/>
 
           <param name="frame_id"                    type="string" value="$(arg frame_id)"/>
           <param name="odom_frame_id"               type="string" value="$(arg vo_frame_id)"/>
@@ -293,38 +228,6 @@
 	  <param     if="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="false"/>
 	  <param unless="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="true"/>
 	  <param name="Mem/InitWMWithAllNodes" type="string" value="$(arg localization)"/>
-    </node>
-
-    <!-- Visualisation RTAB-Map -->
-    <node if="$(arg rtabmapviz)" pkg="rtabmap_ros" type="rtabmapviz" name="rtabmapviz" args="-d $(arg gui_cfg)" output="$(arg output)" launch-prefix="$(arg launch_prefix)">
-      <param     if="$(arg stereo)" name="subscribe_depth"  type="bool" value="false"/>
-      <param unless="$(arg stereo)" name="subscribe_depth"  type="bool" value="true"/>
-      <param name="subscribe_rgbd"       type="bool"   value="$(arg subscribe_rgbd)"/>
-      <param name="subscribe_stereo"     type="bool"   value="$(arg stereo)"/>
-      <param name="subscribe_scan"       type="bool"   value="$(arg subscribe_scan)"/>
-      <param name="subscribe_scan_cloud" type="bool"   value="$(arg subscribe_scan_cloud)"/>
-      <param if="$(arg visual_odometry)" name="subscribe_odom_info" type="bool" value="true"/>
-      <param if="$(arg icp_odometry)"    name="subscribe_odom_info" type="bool" value="true"/>
-      <param name="frame_id"             type="string" value="$(arg frame_id)"/>
-      <param name="odom_frame_id"        type="string" value="$(arg odom_frame_id)"/>
-      <param name="wait_for_transform_duration" type="double"   value="$(arg wait_for_transform)"/>
-      <param name="queue_size"           type="int"    value="$(arg queue_size)"/>
-      <param name="approx_sync"          type="bool"   value="$(arg approx_sync)"/>
-
-      <remap from="rgb/image"       to="$(arg rgb_topic_relay)"/>
-      <remap from="depth/image"     to="$(arg depth_topic_relay)"/>
-      <remap from="rgb/camera_info" to="$(arg camera_info_topic)"/>
-
-      <remap from="rgbd_image"      to="$(arg rgbd_topic)"/>
-
-      <remap from="left/image_rect"        to="$(arg left_image_topic_relay)"/>
-      <remap from="right/image_rect"       to="$(arg right_image_topic_relay)"/>
-      <remap from="left/camera_info"       to="$(arg left_camera_info_topic)"/>
-      <remap from="right/camera_info"      to="$(arg right_camera_info_topic)"/>
-
-      <remap from="scan"                   to="$(arg scan_topic)"/>
-      <remap from="scan_cloud"             to="$(arg scan_cloud_topic)"/>
-      <remap from="odom"                   to="$(arg odom_topic)"/>
     </node>
 
   </group>
