@@ -1,0 +1,91 @@
+<launch>
+  <param name="robot_description"
+    command="$(find xacro)/xacro.py '$(find rover)/urdf/guardian_tracks.urdf.xacro'" />
+
+  <!-- send fake joint values -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="TRUE"/>
+  </node>
+
+  <!-- Combine joint values -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+
+  <!-- <arg name="model" default="$(find rover)/tank_model.urdf"/> -->
+  <arg name="gui" default="true" />
+  <arg name="rvizconfig" default="$(find rover)/rover.rviz" />
+  <arg name="osm_url" default="file:///home/bblaze/Desktop/north-carolina-latest.osm" />
+
+  <arg name="debug" default="false" />
+
+  <!-- <param name="robot_description" command="$(find xacro)/xacro.py $(find rover)/tank_model.urdf" /> -->
+  <param name="use_gui" value="$(arg gui)"/>
+
+    <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+
+    <param name="/use_sim_time" value="false"/>
+
+  <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+  <!-- <include file="$(find moveit)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+  <node pkg="tf" type="static_transform_publisher" name="localmap_broadcaster" args="622150 3362350 0 0 0 0 1 /map /local_map 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 /local_map /odom_combined 100" />
+  <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 /odom_combined /base_link 100" /> -->
+
+  <!-- We do not have a robot connected, so publish fake joint states -->
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="/use_gui" value="$(arg gui)"/>
+    <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
+  </node> -->
+
+  <!-- Given the published joint states, publish tf for the robot links -->
+  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" /> -->
+
+  <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
+  <!-- <include file="$(find moveit)/launch/move_group.launch">
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="fake_execution" value="true"/>
+    <arg name="info" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include> -->
+  <!-- <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen" respawn="true">
+    <param name="port" value="/dev/ttyACM1" />
+    <param name="baud" value="115200" />
+  </node> -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+  <include file="$(find hector_mapping)/launch/mapping_default.launch"/>
+
+  <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
+    <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
+    <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
+  </include>
+
+  <!-- rgbd slam -->
+  <node pkg="rgbdslam" type="rgbdslam" name="rgbdslam" cwd="node" required="true" output="screen">
+    <!-- Input data settings-->
+    <param name="config/topic_image_mono"              value="/camera/rgb/image_color"/>
+    <param name="config/topic_image_depth"             value="/camera/depth_registered/sw_registered/image_rect_raw"/>
+
+    <!-- These are the default values of some important parameters -->
+    <param name="config/feature_extractor_type"        value="ORB"/><!-- also available: SIFT, SIFTGPU, SURF, SURF128 (extended SURF), ORB. -->
+    <param name="config/feature_detector_type"         value="ORB"/><!-- also available: SIFT, SURF, GFTT (good features to track), ORB. -->
+    <param name="config/detector_grid_resolution"      value="3"/><!-- detect on a 3x3 grid (to spread ORB keypoints and parallelize SIFT and SURF) -->
+    <param name="config/max_keypoints"                 value="600"/><!-- Extract no more than this many keypoints -->
+    <param name="config/max_matches"                   value="300"/><!-- Keep the best n matches (important for ORB to set lower than max_keypoints) -->
+
+    <param name="config/min_sampled_candidates"        value="4"/><!-- Frame-to-frame comparisons to random frames (big loop closures) -->
+    <param name="config/predecessor_candidates"        value="4"/><!-- Frame-to-frame comparisons to sequential frames-->
+    <param name="config/neighbor_candidates"           value="4"/><!-- Frame-to-frame comparisons to graph neighbor frames-->
+    <param name="config/ransac_iterations"             value="100"/>
+    <param name="config/cloud_creation_skip_step"      value="2"/><!-- subsample the images' pixels (in both, width and height), when creating the cloud (and therefore reduce memory consumption) -->
+
+
+    <param name="config/cloud_display_type"            value="POINTS"/><!-- Show pointclouds as points (as opposed to TRIANGLE_STRIP) -->
+    <param name="config/pose_relative_to"              value="largest_loop"/><!-- optimize only a subset of the graph: "largest_loop" = Everything from the earliest matched frame to the current one. Use "first" to optimize the full graph, "inaffected" to optimize only the frames that were matched (not those inbetween for loops) -->
+    <param name="config/backend_solver"                value="pcg"/><!-- pcg is faster and good for continuous online optimization, cholmod and csparse are better for offline optimization (without good initial guess)-->
+    <param name="config/optimizer_skip_step"           value="1"/><!-- optimize only every n-th frame -->
+
+  </node>
+</launch>

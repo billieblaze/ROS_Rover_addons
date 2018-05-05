@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<robot name="guardian_tracks" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Robot mechanical and motor parameters -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="wheel_offset_x" value="0.300" />    <!-- x,y,z in base_footprint CS -->
+  <xacro:property name="wheel_offset_y" value="0.265" />
+  <xacro:property name="wheel_offset_z" value="0.0" />
+  <xacro:property name="wheel_joint_damping" value="0.0" />
+  <xacro:property name="wheel_joint_friction" value="0.0" />
+
+  <xacro:property name="wheel_joint_effort_limit" value="200.0" />
+  <xacro:property name="wheel_joint_velocity_limit" value="200.0" />
+  <xacro:property name="wheel_mechanical_reduction" value="1.0" />
+
+  <xacro:property name="ptz_joint_effort_limit" value="100.0" />
+  <xacro:property name="ptz_joint_velocity_limit" value="100.0"/>
+  <xacro:property name="ptz_joint_friction" value="0.1" />
+  <xacro:property name="ptz_joint_damping" value="0.1" />
+  <xacro:property name="ptz_mechanical_reduction" value="1.0" />
+
+
+
+  <!-- BASE FOOTPRINT -->
+  <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin,
+             navigation stack depends on this frame -->
+  <link name="base_footprint">
+      <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+             <box size="0.001 0.001 0.001" />
+          </geometry>
+      </visual>
+
+      <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <box size="0.001 0.001 0.001" />
+         </geometry>
+     </collision>
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+     <!--NB: While you would think this would make it go up, it is oddly reversed.
+      This moves the joint to 0,0,0 where we want it for rviz, etc. -->
+     <!-- origin xyz="0 0 0.130" rpy="0 0 0" / -->
+     <origin xyz="0 0 0.069" rpy="0 0 0" />
+     <parent link="base_footprint"/>
+     <child link="base_link" />
+  </joint>
+
+
+  <!-- BASE_LINK (RED) -->
+  <link name="base_link">
+    <inertial>
+      <mass value="95.0" />
+      <origin xyz="0 0 0" />
+      <inertia  ixx="3.737" ixy="0.008"  ixz="-0.144"  iyy="8.311"  iyz="-0.004"  izz="8.893" />
+    </inertial>
+    <visual>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+	 <mesh filename="package://guardian_description/meshes/chassis/v7/chassisV7.dae"/>
+       </geometry>
+    </visual>
+    <collision>
+       <origin xyz="0 0 0" rpy="0 0 0 " />
+       <geometry>
+         <mesh filename="package://guardian_description/meshes/chassis/v7/chassisV7.dae"/>
+       </geometry>
+    </collision>
+  </link>
+
+
+  <!-- LEFT TRACK (BLACK) -->
+  <link name="left_track">
+    <inertial>
+      <mass value="1.250" />
+      <origin xyz="0 0 0" />
+      <inertia  ixx="0.0109375" ixy="0.0"  ixz="0.0"  iyy="0.021125"  iyz="0.0"  izz="0.0109375" />
+    </inertial>
+    <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+	 <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+        </geometry>
+	<material name="black">
+  		<color rgba="0.1 0.1 0.1 1"/>
+      	</material>
+    </visual>
+    <collision>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+         <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+       </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="joint_left_track" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_track"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+  </joint>
+
+
+  <!-- RIGHT TRACK (BLACK) -->
+  <link name="right_track">
+    <inertial>
+      <mass value="1.250" />
+      <origin xyz="0 0 0" />
+      <inertia  ixx="0.0109375" ixy="0.0"  ixz="0.0"  iyy="0.021125"  iyz="0.0"  izz="0.0109375" />
+    </inertial>
+    <visual>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+	 <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+       </geometry>
+	<material name="black">
+		<color rgba="0.1 0.1 0.1 1"/>
+      	</material>
+    </visual>
+    <collision>
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <geometry>
+         <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+       </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="joint_right_track" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_track"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 3.1415926535" />
+  </joint>
+
+
+  <!-- RPLIDAR SENSOR -->
+  <joint name="laser_joint" type="fixed">
+     <axis xyz="0 1 0" />
+     <origin xyz="-0.43171 0 0.29163" rpy="0 0 ${PI}"/>
+     <parent link="base_link"/>
+     <child link="laser_link"/>
+  </joint>
+  <!-- Hokuyo Laser -->
+  <link name="laser_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	         <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <!-- Camera -->
+  <joint name="camera_joint" type="fixed">
+     <axis xyz="0 1 0" />
+     <origin xyz="-0.43171 0 0.29163" rpy="0 0 0"/>
+     <parent link="base_link"/>
+     <child link="camera_link"/>
+  </joint>
+  <!-- Hokuyo Laser -->
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+           <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+
+
+  <!-- IMU SENSOR -->
+  <joint name="imu_joint" type="fixed">
+      <axis xyz="1 0 0"/> <!-- 0 1 0 -->
+      <origin xyz="0 0 0.2825"/>
+      <parent link="base_link"/>
+      <child link="imu_link"/>
+  </joint>
+
+  <link name="imu_link">
+      <inertial>
+        <mass value="0.001"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <box size=".001 .001 .001"/>
+        </geometry>
+      </collision>
+  </link>
+
+
+</robot>
