@@ -24,8 +24,8 @@
     <!-- <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/> -->
 
     <!-- Choose visualization -->
-    <arg name="rtabmapviz"              default="true" />
-    <arg name="rviz"                    default="false" />
+    <arg name="rtabmapviz"              default="false" />
+    <arg name="rviz"                    default="true" />
 
     <!-- Localization-only mode -->
     <arg name="localization"            default="false"/>
