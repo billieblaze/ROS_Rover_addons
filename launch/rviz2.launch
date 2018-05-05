@@ -21,7 +21,7 @@
   <!-- <param name="robot_description" command="$(find xacro)/xacro.py $(find rover)/tank_model.urdf" /> -->
   <param name="use_gui" value="$(arg gui)"/>
 
-    <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+    <!-- <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/> -->
 
     <!-- Choose visualization -->
     <arg name="rtabmapviz"              default="true" />
@@ -145,7 +145,7 @@
   <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" /> -->
   <!-- Nodes -->
   <group ns="$(arg namespace)">
-
+<include file="$(find openni2_launch)/launch/openni2.launch"/>
     <!-- relays -->
     <group unless="$(arg stereo)">
       <node if="$(arg compressed)" name="republish_rgb" type="republish" pkg="image_transport" args="$(arg rgb_image_transport) in:=$(arg rgb_topic) raw out:=$(arg rgb_topic_relay)" />
